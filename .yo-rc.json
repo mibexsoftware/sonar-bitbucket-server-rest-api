@@ -1,0 +1,11 @@
+{
+  "generator-openapi-repo": {
+    "importExistingSpec": true,
+    "importedSpec": "../sonar-for-stash/generated/swagger-ui/swagger.yaml",
+    "name": "Sonar for Bitbucket Server",
+    "repo": "mibexsoftware/sonar-bitbucket-server-rest-api",
+    "splitSpec": false,
+    "samples": true,
+    "installSwaggerUI": false
+  }
+}
