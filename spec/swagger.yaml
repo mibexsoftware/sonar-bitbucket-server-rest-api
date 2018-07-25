@@ -14,6 +14,12 @@ info:
     \      your repositories."
   version: "v1"
   title: "Sonar for Bitbucket Server REST API"
+  contact:
+    name: "Mibex Software GmbH"
+    url: "https://www.mibexsoftware.com"
+  license:
+    name: "Copyright (c) 2018 by Mibex Software GmbH, Switzerland. All rights reserved."
+    url: "https://mibexsoftware.com/imprint/"
 host: "YOUR_BITBUCKET_SERVER"
 basePath: "/rest/sonar4stash/1.0"
 tags:
@@ -218,7 +224,7 @@ paths:
       - "Sonar server configurations"
       summary: "Creates a SonarQube server configuration."
       description: ""
-      operationId: "addConfig"
+      operationId: "createSonarServerConfiguration"
       consumes:
       - "application/json"
       produces:
@@ -317,6 +323,18 @@ definitions:
         description: "Enter your SonarQube user token (only available with SonarQube\
           \ >= 5.3) if you want to use token-based authentication instead of using\
           \ login/password."
+      allowUserTokens:
+        type: "boolean"
+        description: "Allow users to use their own SonarQube account when making requests\
+          \ to this SonarQube server from Bitbucket."
+        default: false
+      requireUserTokensType:
+        type: "string"
+        description: "Type of user tokens requirement."
+        enum:
+        - "NOT_REQUIRED"
+        - "REQUIRE_ALL_ACTIONS"
+        - "REQUIRE_WRITABLE_ACTIONS"
       id:
         type: "integer"
         format: "int32"
@@ -407,6 +425,7 @@ definitions:
         enum:
         - "POLL"
         - "DISABLE_PLUGIN"
+        - "SWITCH_TO_INCREMENTAL"
       matchingBranchesRegex:
         type: "string"
         description: "(available from plug-in version >= 1.12); enable plug-in for\
@@ -557,6 +576,11 @@ definitions:
         type: "string"
         description: "A list of Bitbucket Server users separated with \"|!|\" which\
           \ should be allowed to merge even if a quality gate fails. Example: adam|!|sara"
+      groupsToIgnoreMergeCheck:
+        type: "string"
+        description: "A list of Bitbucket Server groups separated with \"|!|\" which\
+          \ members should be allowed to merge even if a quality gate fails. Example:\
+          \ devs|!|ops"
   RestRepoProjectConfig:
     type: "object"
     properties:
@@ -620,6 +644,10 @@ definitions:
         - "SONARRUNNER"
         - "GRADLE"
         - "COMPATIBILITY"
+      showIssuesInSource:
+        type: "boolean"
+        description: "Show Sonar infos also in Bitbucket source view."
+        default: false
       showOnlyNewOrChangedLines:
         type: "boolean"
         description: "By default, the add-on only shows Sonar information like issues,\
@@ -670,6 +698,7 @@ definitions:
         enum:
         - "POLL"
         - "DISABLE_PLUGIN"
+        - "SWITCH_TO_INCREMENTAL"
       matchingBranchesRegex:
         type: "string"
         description: "(available from plug-in version >= 1.12); enable plug-in for\
@@ -709,7 +738,13 @@ definitions:
         default: false
       showQualityGates:
         type: "boolean"
-        description: "Show quality gate status in the pull request statistics."
+        description: "Show quality gate status in the pull request details statistics\
+          \ panel."
+        default: false
+      showQualityGatesInLists:
+        type: "boolean"
+        description: "Show quality gate status in the pull request and branches lists\
+          \ of this repository."
         default: false
       showBehindCommitsWarning:
         type: "boolean"
