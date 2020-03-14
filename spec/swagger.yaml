@@ -375,6 +375,16 @@ definitions:
         enum:
         - "LEAK_PERIOD"
         - "BRANCH_DIFF"
+      useSonarBranchFeature:
+        type: "boolean"
+        description: "(available from plug-in version >= 1.15); Use the new branching\
+          \ feature introduced with commercial editions of SonarQube >= 6.7 which\
+          \ does not result in separate projects for branches anymore."
+        default: false
+      showIssuesInSource:
+        type: "boolean"
+        description: "Show Sonar infos also in Bitbucket source view."
+        default: false
       showOnlyNewOrChangedLines:
         type: "boolean"
         description: "By default, the add-on only shows Sonar information like issues,\
@@ -591,7 +601,7 @@ definitions:
       inheritFromProject:
         type: "boolean"
         description: "true if you want to inherit the plug-ins settings for this repository\
-          \ from the project"
+          \ from the project; not supported for repository forks"
         default: false
       serverConfigId:
         type: "integer"
@@ -627,17 +637,17 @@ definitions:
       useSonarBranchFeature:
         type: "boolean"
         description: "(available from plug-in version >= 1.15); Use the new branching\
-          \ feature introduced with commercial editions of SonarQube 6.7 which does\
-          \ not result in separate projects for branches anymore."
+          \ feature introduced with commercial editions of SonarQube >= 6.7 which\
+          \ does not result in separate projects for branches anymore."
         default: false
       buildType:
         type: "string"
-        description: "The system you use to trigger SonarQube from your build. Use\
-          \ compatibility mode when none of the other work for you. While this mode\
-          \ can be significantly slower to fetch data from SonarQube, it should work\
-          \ in cases where the other build types do not (e.g., when you do not have\
-          \ any build files like sonar-project.properties in your repository, but\
-          \ have all configuration data in your CI system instead)."
+        description: "The tool you use to trigger SonarQube from your build. Use compatibility\
+          \ mode when none of the other work for you. While this mode can be significantly\
+          \ slower to fetch data from SonarQube, it should work in cases where the\
+          \ other build types do not (e.g., when you do not have any build files like\
+          \ sonar-project.properties in your repository, but have all configuration\
+          \ data in your CI system instead)."
         enum:
         - "AUTO"
         - "MAVEN"
@@ -724,6 +734,11 @@ definitions:
           \ branch project automatically. If this setting is enabled, this plug-in\
           \ will copy all project properties from the master to the branch project."
         default: false
+      qualityGateProvisioningEnabled:
+        type: "boolean"
+        description: "Copies the assigned quality gate from the main branch project\
+          \ to new branch projects automatically."
+        default: false
   RestRepoStatisticsConfig:
     type: "object"
     properties:
@@ -735,6 +750,10 @@ definitions:
         type: "boolean"
         description: "Shows the Sonar statistics collapsed by default to save space\
           \ on your pull request overview page."
+        default: false
+      showBranchStatistics:
+        type: "boolean"
+        description: "Shows Sonar branch statistics in the source view."
         default: false
       showQualityGates:
         type: "boolean"
