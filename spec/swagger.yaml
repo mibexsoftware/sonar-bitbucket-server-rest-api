@@ -18,7 +18,7 @@ info:
     name: "Mibex Software GmbH"
     url: "https://www.mibexsoftware.com"
   license:
-    name: "Copyright (c) 2018 by Mibex Software GmbH, Switzerland. All rights reserved."
+    name: "Copyright (c) 2021 by Mibex Software GmbH, Switzerland. All rights reserved."
     url: "https://mibexsoftware.com/imprint/"
 host: "YOUR_BITBUCKET_SERVER"
 basePath: "/rest/sonar4stash/1.0"
@@ -26,6 +26,7 @@ tags:
 - name: "Project settings"
 - name: "Repository settings"
 - name: "Sonar server configurations"
+- name: "Sonar user token configuration"
 schemes:
 - "http"
 - "https"
@@ -288,6 +289,116 @@ paths:
           description: "The currently authenticated user does not have ADMIN credentials"
         404:
           description: "The SonarQube server configuration does not exist"
+  /user-tokens/{userSlug}:
+    get:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Returns the SonarQube user tokens for a specific Bitbucket user."
+      description: ""
+      operationId: "getUserTokens"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SonarQube user tokens returned"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+    post:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Creates a SonarQube user token configuration."
+      description: ""
+      operationId: "addUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube user token configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestUserToken"
+      responses:
+        200:
+          description: "SonarQube user token configuration created"
+        400:
+          description: "A validation error for the given input occurred"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
+    put:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Updates a SonarQube user token configuration."
+      description: ""
+      operationId: "updateUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube user token configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestUserToken"
+      responses:
+        200:
+          description: "SonarQube user token configuration updated"
+        400:
+          description: "A validation error for the given input occurred"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
+    delete:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Deletes a SonarQube user token configuration."
+      description: ""
+      operationId: "deleteUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "SonarQube user token configuration deleted"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
 definitions:
   RestAdminConfig:
     type: "object"
@@ -308,6 +419,9 @@ definitions:
           \ Web UI. You only have to configure this if a different URL should be used\
           \ than the \"Sonar Base URL\", e.g. when your SonarQube and Bitbucket server\
           \ is in a different network."
+      sonarOrganizationKey:
+        type: "string"
+        description: "This is the organization key for your SonarCloud account."
       sonarLogin:
         type: "string"
         description: "Leave empty if anonymous login is enabled or if you want to\
@@ -320,14 +434,16 @@ definitions:
           \ encrypted in the Bitbucket Server database."
       sonarUserToken:
         type: "string"
-        description: "Enter your SonarQube user token (only available with SonarQube\
-          \ >= 5.3) if you want to use token-based authentication instead of using\
-          \ login/password."
+        description: "Enter your SonarQube user token if you want to use token-based\
+          \ authentication instead of using login/password."
       allowUserTokens:
         type: "boolean"
         description: "Allow users to use their own SonarQube account when making requests\
           \ to this SonarQube server from Bitbucket."
-        default: false
+      invalidWebhookState:
+        type: "string"
+        description: "State of webhook configuration if not valid for this app in\
+          \ the SonarQube server"
       requireUserTokensType:
         type: "string"
         description: "Type of user tokens requirement."
@@ -335,6 +451,18 @@ definitions:
         - "NOT_REQUIRED"
         - "REQUIRE_ALL_ACTIONS"
         - "REQUIRE_WRITABLE_ACTIONS"
+      illegalBranchReplacement:
+        type: "string"
+        description: "Replacement for illegal branch characters."
+      manualWebhookEnabled:
+        type: "boolean"
+        description: "The app creates a global webhook in SonarQube to get notified\
+          \ about new analysis results. This requires SonarQube system admin permissions.\
+          \ If you do not want to configure system admin credentials, enable this\
+          \ option."
+      manualWebhookSecret:
+        type: "string"
+        description: "The secret for the manual webhook from SonarQube."
       id:
         type: "integer"
         format: "int32"
@@ -344,6 +472,14 @@ definitions:
       name: "adminconfig"
   RestProjectConfig:
     type: "object"
+    required:
+    - "duplicateCode"
+    - "issues"
+    - "mergeChecks"
+    - "project"
+    - "provisioning"
+    - "statistics"
+    - "testCoverage"
     properties:
       project:
         $ref: "#/definitions/RestProjectSonarProjectConfig"
@@ -362,44 +498,26 @@ definitions:
   RestProjectSonarProjectConfig:
     type: "object"
     properties:
-      analysisMode:
-        type: "string"
-        description: "Leak period (\"LEAK_PERIOD\") compares the metrics of the current\
-          \ build with the one from the leak period, which means that the latest SonarQube\
-          \ project version is used to compare the current project quality. If you\
-          \ choose the branch-based mode (\"BRANCH_DIFF\"), then the plug-in will\
-          \ compare the code quality of the source with the one of the target branch\
-          \ of the pull request. This means that both branches need to be analyzed\
-          \ before creating the pull request. Note that not only the statistics are\
-          \ based on this choice, but also the merge check metrics."
-        enum:
-        - "LEAK_PERIOD"
-        - "BRANCH_DIFF"
       useSonarBranchFeature:
         type: "boolean"
-        description: "(available from plug-in version >= 1.15); Use the new branching\
-          \ feature introduced with commercial editions of SonarQube >= 6.7 which\
-          \ does not result in separate projects for branches anymore."
-        default: false
+        description: "(available from plug-in version >= 1.15); Use the commercial\
+          \ SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name)\
+          \ and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project\
+          \ and does not result in separate projects anymore as it was the case with\
+          \ -Dsonar.branch."
       showIssuesInSource:
         type: "boolean"
-        description: "Show Sonar infos also in Bitbucket source view."
-        default: false
-      showOnlyNewOrChangedLines:
-        type: "boolean"
-        description: "By default, the add-on only shows Sonar information like issues,\
-          \ coverage and duplicate code markers on new or changed lines of the pull\
-          \ request diff. If disabled, this information will be shown on unchanged\
-          \ lines as well."
-        default: false
+        description: "When enabled, Sonar issues, coverage and duplicate lines will\
+          \ be shown in the Bitbucket source file view as well."
       illegalBranchCharReplacement:
         type: "string"
-        description: "Only necessary to configure for SonarQube versions < 5.0, otherwise\
-          \ leave it empty. SonarQube < 5.0 only allows the following characters in\
-          \ its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\" which is typically\
-          \ used in Git branch naming patterns (e.g., features/user-story-xyz) must\
-          \ be replaced by the provided character here. The default \"_\" is fine\
-          \ when you use Sonar for Bamboo or Jenkins."
+        description: "Only configure for SonarQube Community versions 7.9.x or 8.4\
+          \ and newer, otherwise leave it empty! These versions only allow the following\
+          \ characters in its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\"\
+          \ which is typically used in Git branch naming patterns (e.g., features/user-story-xyz)\
+          \ must be replaced by the provided character here. Make sure that this branch\
+          \ key replacement character matches the one in your build system (e.g.,\
+          \ Sonar for Bamboo)."
       branchPrefix:
         type: "string"
         description: "Only necessary if you have Sonar project keys where the branch\
@@ -408,45 +526,49 @@ definitions:
           \ to set this field to \"origin/\"."
       pullRequestBranch:
         type: "string"
-        description: "(available from plug-in version >= 1.11); only necessary if\
+        description: "(available from plug-in version >= 1.11); Only necessary if\
           \ you want to use the special pull request branches \"refs/pull-requests/*/from\"\
           \ instead of the source branch of the pull request to get data from SonarQube.\
           \ This might be useful if you only build & analyze pull request branches,\
           \ but not the source branch of the pull request. Use values like \"refs/pull-requests/%d/from\"\
-          \ or \"pull-requests/%d\" and the plug-in will replace \"%d\" with the actual\
-          \ pull request ID."
+          \ or \"pull-requests/%d\" and the app will replace \"%d\" with the actual\
+          \ pull request ID. Note that you must not enable this if you want to use\
+          \ pull request analysis of commercial SonarQube editions or SonarCloud."
       projectCleanupEnabled:
         type: "boolean"
         description: "Deletes a Sonar project when its corresponding branch is deleted\
           \ in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects\
           \ are created due to code reviews with branches)."
-        default: false
       forkCleanupEnabled:
         type: "boolean"
         description: "(available from plug-in version >= 1.11); will also delete a\
           \ Sonar project for a deleted branch in a repository fork (CAUTION: such\
           \ a project might be referenced from the origin repository and other forks,\
           \ therefore make sure that you really want this)."
-        default: false
       noSonarProjectBehaviour:
         type: "string"
-        description: "Configure the plug-ins behaviour when a Sonar project does not\
-          \ exist for the source or target branch of a pull request."
+        description: "Configure the apps behaviour when a Sonar project does not exist\
+          \ for the source or target branch of a pull request."
         enum:
         - "POLL"
         - "DISABLE_PLUGIN"
-        - "SWITCH_TO_INCREMENTAL"
       matchingBranchesRegex:
         type: "string"
-        description: "(available from plug-in version >= 1.12); enable plug-in for\
-          \ branches matching regex only. Example: (feature|bugfix)/.*"
-      incrementalModeForMatches:
-        type: "string"
-        description: "(available from plug-in version >= 1.12);  enable incremental\
-          \ mode for matching branches with this regex. Example for using incremental\
-          \ mode with feature branches: feature/.*"
+        description: "(available from plug-in version >= 1.12); The app will only\
+          \ be enabled for pull requests with source branches matching this regular\
+          \ expression. Example for only analyzing feature branches: feature/.* You\
+          \ can also use negative patterns like ((?!feature/).)* to enable it for\
+          \ everything except feature branches."
   RestRepoConfig:
     type: "object"
+    required:
+    - "duplicateCode"
+    - "issues"
+    - "mergeChecks"
+    - "project"
+    - "provisioning"
+    - "statistics"
+    - "testCoverage"
     properties:
       project:
         $ref: "#/definitions/RestRepoProjectConfig"
@@ -467,17 +589,13 @@ definitions:
     properties:
       showDuplicateCode:
         type: "boolean"
-        description: "Marks duplicate code found in the pull request diff view. Needs\
-          \ SonarQube version >= 4.4."
-        default: false
+        description: "Shows duplicate code lines found in the source view."
   RestRepoIssueConfig:
     type: "object"
     properties:
       showSonarIssues:
         type: "boolean"
-        description: "Show Sonar issues in the pull request diff view and in the issue\
-          \ overview screen."
-        default: false
+        description: "Show Sonar issues in the pull request diff."
       sonarIssueMinSeverity:
         type: "string"
         description: "Only issues with severity equal or higher than this will be\
@@ -488,100 +606,31 @@ definitions:
         - "MAJOR"
         - "CRITICAL"
         - "BLOCKER"
-      showOnlyNewIssues:
-        type: "boolean"
-        description: "When true, the plug-in will only show issues that have been\
-          \ introduced with commits from the current pull request. Otherwise, the\
-          \ plug-in will also show old issues, but only if they are on changed/new\
-          \ lines of the diff."
-        default: false
-      showResolvedIssues:
-        type: "boolean"
-        description: "(available from plug-in version >= 1.14); Shows issues that\
-          \ have been resolved (e.g., wont fix, false duplicate or resolved) since\
-          \ creating the pull request. This allows you to discuss issues that e.g.\
-          \ have been marked as a false positive during the code review with your\
-          \ peers."
-        default: false
-      enableIssueOverview:
-        type: "boolean"
-        description: "(available from plug-in version >= 1.14); Shows issues that\
-          \ have been resolved (e.g., wont fix, false duplicate or resolved) since\
-          \ creating the pull request. This allows you to discuss issues that e.g.\
-          \ have been marked as a false positive during the code review with your\
-          \ peers."
-        default: false
   RestRepoMergeCheckConfig:
     type: "object"
     properties:
       mergeChecksEnabled:
         type: "boolean"
-        description: "Prevents merges of pull requests if the quality thresholds below\
-          \ are exceeded."
-        default: false
+        description: "Prevents merges of pull requests if quality thresholds are exceeded."
       mergeChecksForMatches:
         type: "string"
         description: "(available from plug-in version >= 1.13); Only run merge checks\
-          \ for branches matching this regex. If you use incremental mode for your\
-          \ short-lived branches, we recommend to exclude merge checks for them here\
-          \ because merge checks are normally defined in terms of the complete project\
-          \ and not only for a subset of the files. Example for using merge checks\
-          \ with develop and release branches only: develop|(release/.*)"
+          \ for SOURCE branches of a pull request matching this regex (leave empty\
+          \ to always run merge checks). Example for excluding feature branches: ^(?!feature\\\
+          /).*$"
       targetMergeChecksForMatches:
         type: "string"
-        description: "(available from plug-in version >= 1.14); Merge checks for TARGET\
-          \ branches matching regex"
+        description: "(available from plug-in version >= 1.14); Only run merge checks\
+          \ for TARGET branches of a pull request matching this regex (leave empty\
+          \ to always run merge checks). This is useful when you e.g. only want to\
+          \ run merge checks when you merge into release/develop/master branches but\
+          \ do not want to run them when merging feature branches. Example for only\
+          \ checking these branches: master|develop|release.*"
       qualityGatesEnabled:
         type: "boolean"
         description: "This will use the configured quality gates for the SonarQube\
           \ project as merge checks. If any of the quality gates has an error, merging\
           \ of pull requests will be prevented."
-        default: false
-      technicalDebtMaxIncrease:
-        type: "integer"
-        format: "int32"
-        description: "If technical dept in new code increases by more than this percentage,\
-          \ merging of pull requests will be prevented. Leave empty to always allow\
-          \ merging."
-      sonarIssuesMaxNew:
-        type: "integer"
-        format: "int32"
-        description: "If the number of new issues with the chosen severity or higher\
-          \ increases by more than this value, merging of pull requests will be prevented.\
-          \ Leave empty to always allow merging."
-      sonarIssueTypeMaxNew:
-        type: "string"
-        description: "The severity for the maximum allowed number of new issues."
-        enum:
-        - "INFO"
-        - "MINOR"
-        - "MAJOR"
-        - "CRITICAL"
-        - "BLOCKER"
-      duplicateCodeMaxIncrease:
-        type: "integer"
-        format: "int32"
-        description: "If duplicate lines in new code increases by more than this percentage,\
-          \ merging of pull requests will be prevented. Leave empty to always allow\
-          \ merging."
-      coverageMinPercentage:
-        type: "integer"
-        format: "int32"
-        description: "If the test coverage of new code goes below this percentage,\
-          \ merging of pull requests will be prevented. Leave empty to always allow\
-          \ merging."
-      noMoreUncoveredLines:
-        type: "boolean"
-        description: "Verifies that unit test coverage percentage in source branch\
-          \ (e.g., feature/X) is not less than in target branch (e.g., master). The\
-          \ coverage value is calculated by the plug-in as follows: (lines_to_cover\
-          \ - uncovered_lines) / lines_to_cover"
-        default: false
-      noInProgressOrFailedBuild:
-        type: "boolean"
-        description: "(available from plug-in version >= 1.13); Prevents merging if\
-          \ the last commit of this pull request has any in-progress or failed builds."
-        default: false
       usersToIgnoreMergeCheck:
         type: "string"
         description: "A list of Bitbucket Server users separated with \"|!|\" which\
@@ -596,13 +645,11 @@ definitions:
     properties:
       sonarEnabled:
         type: "boolean"
-        description: "true if the plug-in should be enabled for this repository"
-        default: false
+        description: "true if the app should be enabled for this repository"
       inheritFromProject:
         type: "boolean"
         description: "true if you want to inherit the plug-ins settings for this repository\
           \ from the project; not supported for repository forks"
-        default: false
       serverConfigId:
         type: "integer"
         format: "int32"
@@ -615,64 +662,40 @@ definitions:
           \ branch project provisioning is active."
       projectBaseKey:
         type: "string"
-        description: "This is the base key of your Sonar project. The add-on will\
-          \ add the branch name to it (<sonar project base key>:<sonar-branch>, e.g.\
-          \ \"org.apache.commons:commons-lang3:master\") to get project information\
-          \ used in pull requests. Use the \"sonar.branch\" property (called \"Auto\
-          \ branch\" in Sonar for Bamboo) in your Bamboo/Jenkins build settings and\
-          \ Sonar generates the expected project keys for your branches."
-      analysisMode:
-        type: "string"
-        description: "Leak period (\"LEAK_PERIOD\") compares the metrics of the current\
-          \ build with the one from the leak period, which means that the latest SonarQube\
-          \ project version is used to compare the current project quality. If you\
-          \ choose the branch-based mode (\"BRANCH_DIFF\"), then the plug-in will\
-          \ compare the code quality of the source with the one of the target branch\
-          \ of the pull request. This means that both branches need to be analyzed\
-          \ before creating the pull request. Note that not only the statistics are\
-          \ based on this choice, but also the merge check metrics."
-        enum:
-        - "LEAK_PERIOD"
-        - "BRANCH_DIFF"
+        description: "This is the base project key of your Sonar project. The app\
+          \ will append the branch name to it (<sonar project base key>:<sonar-branch>,\
+          \ e.g. \"org.apache.commons:commons-lang3:master\") to fetch Sonar projects\
+          \ in SonarQube community editions. For commercial editions, this option\
+          \ is not used."
       useSonarBranchFeature:
         type: "boolean"
-        description: "(available from plug-in version >= 1.15); Use the new branching\
-          \ feature introduced with commercial editions of SonarQube >= 6.7 which\
-          \ does not result in separate projects for branches anymore."
-        default: false
+        description: "(available from plug-in version >= 1.15); Use the commercial\
+          \ SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name)\
+          \ and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project\
+          \ and does not result in separate projects anymore as it was the case with\
+          \ -Dsonar.branch."
       buildType:
         type: "string"
-        description: "The tool you use to trigger SonarQube from your build. Use compatibility\
-          \ mode when none of the other work for you. While this mode can be significantly\
-          \ slower to fetch data from SonarQube, it should work in cases where the\
-          \ other build types do not (e.g., when you do not have any build files like\
-          \ sonar-project.properties in your repository, but have all configuration\
-          \ data in your CI system instead)."
+        description: "Use compatibility mode when automatic mode does not work for\
+          \ you. While compatibility mode can be significantly slower to fetch data\
+          \ from SonarQube, it should work in cases where the automatic mode does\
+          \ not."
         enum:
         - "AUTO"
-        - "MAVEN"
-        - "SONARRUNNER"
-        - "GRADLE"
         - "COMPATIBILITY"
       showIssuesInSource:
         type: "boolean"
-        description: "Show Sonar infos also in Bitbucket source view."
-        default: false
-      showOnlyNewOrChangedLines:
-        type: "boolean"
-        description: "By default, the add-on only shows Sonar information like issues,\
-          \ coverage and duplicate code markers on new or changed lines of the pull\
-          \ request diff. If disabled, this information will be shown on unchanged\
-          \ lines as well."
-        default: false
+        description: "When enabled, Sonar issues, coverage and duplicate lines will\
+          \ be shown in the Bitbucket source file view as well."
       illegalBranchCharReplacement:
         type: "string"
-        description: "Only necessary to configure for SonarQube versions < 5.0, otherwise\
-          \ leave it empty. SonarQube < 5.0 only allows the following characters in\
-          \ its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\" which is typically\
-          \ used in Git branch naming patterns (e.g., features/user-story-xyz) must\
-          \ be replaced by the provided character here. The default \"_\" is fine\
-          \ when you use Sonar for Bamboo or Jenkins."
+        description: "Only configure for SonarQube Community versions 7.9.x or 8.4\
+          \ and newer, otherwise leave it empty! These versions only allow the following\
+          \ characters in its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\"\
+          \ which is typically used in Git branch naming patterns (e.g., features/user-story-xyz)\
+          \ must be replaced by the provided character here. Make sure that this branch\
+          \ key replacement character matches the one in your build system (e.g.,\
+          \ Sonar for Bamboo)."
       branchPrefix:
         type: "string"
         description: "Only necessary if you have Sonar project keys where the branch\
@@ -681,43 +704,39 @@ definitions:
           \ to set this field to \"origin/\"."
       pullRequestBranch:
         type: "string"
-        description: "(available from plug-in version >= 1.11); only necessary if\
+        description: "(available from plug-in version >= 1.11); Only necessary if\
           \ you want to use the special pull request branches \"refs/pull-requests/*/from\"\
           \ instead of the source branch of the pull request to get data from SonarQube.\
           \ This might be useful if you only build & analyze pull request branches,\
           \ but not the source branch of the pull request. Use values like \"refs/pull-requests/%d/from\"\
-          \ or \"pull-requests/%d\" and the plug-in will replace \"%d\" with the actual\
-          \ pull request ID."
+          \ or \"pull-requests/%d\" and the app will replace \"%d\" with the actual\
+          \ pull request ID. Note that you must not enable this if you want to use\
+          \ pull request analysis of commercial SonarQube editions or SonarCloud."
       projectCleanupEnabled:
         type: "boolean"
         description: "Deletes a Sonar project when its corresponding branch is deleted\
           \ in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects\
           \ are created due to code reviews with branches)."
-        default: false
       forkCleanupEnabled:
         type: "boolean"
         description: "(available from plug-in version >= 1.11); will also delete a\
           \ Sonar project for a deleted branch in a repository fork (CAUTION: such\
           \ a project might be referenced from the origin repository and other forks,\
           \ therefore make sure that you really want this)."
-        default: false
       noSonarProjectBehaviour:
         type: "string"
-        description: "Configure the plug-ins behaviour when a Sonar project does not\
-          \ exist for the source or target branch of a pull request."
+        description: "Configure the apps behaviour when a Sonar project does not exist\
+          \ for the source or target branch of a pull request."
         enum:
         - "POLL"
         - "DISABLE_PLUGIN"
-        - "SWITCH_TO_INCREMENTAL"
       matchingBranchesRegex:
         type: "string"
-        description: "(available from plug-in version >= 1.12); enable plug-in for\
-          \ branches matching regex only. Example: (feature|bugfix)/.*"
-      incrementalModeForMatches:
-        type: "string"
-        description: "(available from plug-in version >= 1.12);  enable incremental\
-          \ mode for matching branches with this regex. Example for using incremental\
-          \ mode with feature branches: feature/.*"
+        description: "(available from plug-in version >= 1.12); The app will only\
+          \ be enabled for pull requests with source branches matching this regular\
+          \ expression. Example for only analyzing feature branches: feature/.* You\
+          \ can also use negative patterns like ((?!feature/).)* to enable it for\
+          \ everything except feature branches."
   RestRepoProvisioningConfig:
     type: "object"
     properties:
@@ -726,63 +745,52 @@ definitions:
         description: "SonarQube quality profiles are not shared between main and feature\
           \ branch projects. If this setting is enabled, this plug-in will copy all\
           \ quality profiles from the master to a branch project."
-        default: false
       propertiesProvisioningEnabled:
         type: "boolean"
         description: "SonarQube project properties (like file exclusion patterns)\
           \ that are configured in the main branch project are not applied to a new\
           \ branch project automatically. If this setting is enabled, this plug-in\
           \ will copy all project properties from the master to the branch project."
-        default: false
       qualityGateProvisioningEnabled:
         type: "boolean"
         description: "Copies the assigned quality gate from the main branch project\
           \ to new branch projects automatically."
-        default: false
   RestRepoStatisticsConfig:
     type: "object"
     properties:
       showStatistics:
         type: "boolean"
         description: "Shows Sonar statistics on the pull request overview screen."
-        default: false
-      collapsedByDefault:
-        type: "boolean"
-        description: "Shows the Sonar statistics collapsed by default to save space\
-          \ on your pull request overview page."
-        default: false
       showBranchStatistics:
         type: "boolean"
-        description: "Shows Sonar branch statistics in the source view."
-        default: false
-      showQualityGates:
-        type: "boolean"
-        description: "Show quality gate status in the pull request details statistics\
-          \ panel."
-        default: false
+        description: "Shows Sonar branch statistics in the repository source view."
       showQualityGatesInLists:
         type: "boolean"
-        description: "Show quality gate status in the pull request and branches lists\
-          \ of this repository."
-        default: false
-      showBehindCommitsWarning:
-        type: "boolean"
-        description: "Shows a warning if the source is behind the target branch which\
-          \ might result in non-accurate statistics."
-        default: false
+        description: "Show quality gate status in the pull request and branches lists."
   RestRepoTestCoverageConfig:
     type: "object"
     properties:
       showCoverage:
         type: "boolean"
-        description: "Marks uncovered code lines in the pull request diff view. Needs\
-          \ SonarQube version >= 4.4."
-        default: false
-      coverageType:
+        description: "Marks uncovered code lines in the source and pull request diff\
+          \ view."
+  RestUserToken:
+    type: "object"
+    required:
+    - "id"
+    - "sonarServerConfig"
+    - "sonarServerConfigId"
+    - "sonarUserToken"
+    properties:
+      sonarUserToken:
         type: "string"
-        description: "Uncovered lines from unit tests (UT), integration tests (IT)\
-          \ or both (OVERALL)."
-        enum:
-        - "UT"
-        - "IT"
-        - "OVERALL"
+      sonarServerConfig:
+        $ref: "#/definitions/RestAdminConfig"
+      sonarServerConfigId:
+        type: "integer"
+        format: "int32"
+      id:
+        type: "integer"
+        format: "int32"
+    xml:
+      name: "usertoken"
