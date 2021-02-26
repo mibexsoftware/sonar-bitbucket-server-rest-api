@@ -442,8 +442,8 @@ definitions:
           \ to this SonarQube server from Bitbucket."
       invalidWebhookState:
         type: "string"
-        description: "State of webhook configuration if not valid for this app in\
-          \ the SonarQube server"
+        description: "OPTIONAL: State of webhook configuration if not valid for this\
+          \ app in the SonarQube server"
       requireUserTokensType:
         type: "string"
         description: "Type of user tokens requirement."
