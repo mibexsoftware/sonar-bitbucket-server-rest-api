@@ -390,17 +390,69 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "fallbackServerId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "removeRepoConfig",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "responses": {
           "200": {
             "description": "SonarQube server configuration deleted"
           },
+          "400": {
+            "description": "The arguments are not valid. Either a valid fallbackServerId or removeRepoConfig is required"
+          },
           "401": {
             "description": "The currently authenticated user does not have ADMIN credentials"
           },
           "404": {
             "description": "The SonarQube server configuration does not exist"
+          }
+        }
+      }
+    },
+    "/sonar-server-configs/repos-using-sonar-server": {
+      "get": {
+        "tags": [
+          "Sonar server configurations"
+        ],
+        "summary": "Returns a list of repos using a Sonar config",
+        "description": "",
+        "operationId": "getReposUsingSonarServer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SonarQube server configurations found"
+          },
+          "401": {
+            "description": "The currently authenticated user does not have ADMIN credentials"
+          },
+          "404": {
+            "description": "Sonar server not found"
           }
         }
       }
@@ -788,10 +840,6 @@
     "RestRepoMergeCheckConfig": {
       "type": "object",
       "properties": {
-        "mergeChecksEnabled": {
-          "type": "boolean",
-          "description": "Prevents merges of pull requests if quality thresholds are exceeded."
-        },
         "mergeChecksForMatches": {
           "type": "string",
           "description": "(available from plug-in version >= 1.13); Only run merge checks for SOURCE branches of a pull request matching this regex (leave empty to always run merge checks). Example for excluding feature branches: ^(?!feature\\/).*$"
