@@ -15,11 +15,9 @@
   },
   "private": true,
   "scripts": {
-    "deploy": "npm run build && deploy-to-gh-pages --update web_deploy",
     "build": "node ./scripts/build.js",
     "swagger": "swagger-repo",
     "test": "swagger-repo validate",
-    "start": "gulp serve",
-    "deploy-branch": "node ./scripts/deploy-branch.js"
+    "start": "gulp serve"
   }
 }
