@@ -638,6 +638,20 @@
           "type": "string",
           "description": "This URL will be used for all outgoing links to the SonarQube Web UI. You only have to configure this if a different URL should be used than the \"Sonar Base URL\", e.g. when your SonarQube and Bitbucket server is in a different network."
         },
+        "sonarQubeEdition": {
+          "type": "string",
+          "description": "SonarQube server edition.",
+          "enum": [
+            "COMMUNITY_EDITION",
+            "COMMERCIAL_EDITION",
+            "COMMUNITY_EDITION_BRANCH"
+          ]
+        },
+        "sonarQubeEditionMigrationWarning": {
+          "type": "string",
+          "description": "OPTIONAL: error description if SonarQube edition migration to serverconfig failed",
+          "readOnly": true
+        },
         "sonarOrganizationKey": {
           "type": "string",
           "description": "This is the organization key for your SonarCloud account."
@@ -657,10 +671,6 @@
         "allowUserTokens": {
           "type": "boolean",
           "description": "Allow users to use their own SonarQube account when making requests to this SonarQube server from Bitbucket."
-        },
-        "invalidWebhookState": {
-          "type": "string",
-          "description": "OPTIONAL: State of webhook configuration if not valid for this app in the SonarQube server"
         },
         "requireUserTokensType": {
           "type": "string",
@@ -687,6 +697,21 @@
           "type": "integer",
           "format": "int32",
           "description": "ID of the referenced server configuration. Only necessary when updating/deleting a configuration."
+        },
+        "serviceAccountUserTokenProvided": {
+          "type": "boolean",
+          "description": "Read only: Indicate, if a user token for the Service Account is configured.",
+          "readOnly": true
+        },
+        "invalidWebhookState": {
+          "type": "string",
+          "description": "Read only: State of webhook configuration if not valid for this app in the SonarQube server",
+          "readOnly": true
+        },
+        "sonarQubeWebhookConfigURL": {
+          "type": "string",
+          "description": "Read only: SonarQube webhook configuration page",
+          "readOnly": true
         }
       },
       "xml": {
@@ -731,10 +756,6 @@
     "RestProjectSonarProjectConfig": {
       "type": "object",
       "properties": {
-        "useSonarBranchFeature": {
-          "type": "boolean",
-          "description": "(available from plug-in version >= 1.15); Use the commercial SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name) and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project and does not result in separate projects anymore as it was the case with -Dsonar.branch."
-        },
         "showIssuesInSource": {
           "type": "boolean",
           "description": "When enabled, Sonar issues, coverage and duplicate lines will be shown in the Bitbucket source file view as well."
@@ -759,17 +780,9 @@
           "type": "boolean",
           "description": "(available from plug-in version >= 1.11); will also delete a Sonar project for a deleted branch in a repository fork (CAUTION: such a project might be referenced from the origin repository and other forks, therefore make sure that you really want this)."
         },
-        "noSonarProjectBehaviour": {
-          "type": "string",
-          "description": "Configure the apps behaviour when a Sonar project does not exist for the source or target branch of a pull request.",
-          "enum": [
-            "POLL",
-            "DISABLE_PLUGIN"
-          ]
-        },
         "matchingBranchesRegex": {
           "type": "string",
-          "description": "(available from plug-in version >= 1.12); The app will only be enabled for pull requests with source branches matching this regular expression. Example for only analyzing feature branches: feature/.* You can also use negative patterns like ((?!feature/).)* to enable it for everything except feature branches."
+          "description": "(available from plug-in version >= 1.12); The app will only be enabled for pull requests with source branches matching this regular expression. Example for only analyzing feature branches: feature/.* Use negative patterns like ((?!feature/).)* to enable it for everything except feature branches."
         }
       }
     },
@@ -886,9 +899,9 @@
           "type": "string",
           "description": "This is the base project key of your Sonar project. The app will append the branch name to it (<sonar project base key>:<sonar-branch>, e.g. \"org.apache.commons:commons-lang3:master\") to fetch Sonar projects in SonarQube community editions. For commercial editions, this option is not used."
         },
-        "useSonarBranchFeature": {
-          "type": "boolean",
-          "description": "(available from plug-in version >= 1.15); Use the commercial SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name) and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project and does not result in separate projects anymore as it was the case with -Dsonar.branch."
+        "sonarAnalysisDir": {
+          "type": "string",
+          "description": "Relative path to the SonarQube \"analysis directory\" in this repository."
         },
         "buildType": {
           "type": "string",
@@ -922,17 +935,9 @@
           "type": "boolean",
           "description": "(available from plug-in version >= 1.11); will also delete a Sonar project for a deleted branch in a repository fork (CAUTION: such a project might be referenced from the origin repository and other forks, therefore make sure that you really want this)."
         },
-        "noSonarProjectBehaviour": {
-          "type": "string",
-          "description": "Configure the apps behaviour when a Sonar project does not exist for the source or target branch of a pull request.",
-          "enum": [
-            "POLL",
-            "DISABLE_PLUGIN"
-          ]
-        },
         "matchingBranchesRegex": {
           "type": "string",
-          "description": "(available from plug-in version >= 1.12); The app will only be enabled for pull requests with source branches matching this regular expression. Example for only analyzing feature branches: feature/.* You can also use negative patterns like ((?!feature/).)* to enable it for everything except feature branches."
+          "description": "(available from plug-in version >= 1.12); The app will only be enabled for pull requests with source branches matching this regular expression. Example for only analyzing feature branches: feature/.* Use negative patterns like ((?!feature/).)* to enable it for everything except feature branches."
         }
       }
     },
@@ -956,10 +961,6 @@
     "RestRepoStatisticsConfig": {
       "type": "object",
       "properties": {
-        "showStatistics": {
-          "type": "boolean",
-          "description": "Shows Sonar statistics on the pull request overview screen."
-        },
         "showBranchStatistics": {
           "type": "boolean",
           "description": "Shows Sonar branch statistics in the repository source view."
