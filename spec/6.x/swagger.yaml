@@ -1,0 +1,882 @@
+---
+swagger: "2.0"
+info:
+  description: "REST API documentation for the plug-in Sonar for Bitbucket Server.\n\
+    \                                    The REST API allows you to maintain the repository\
+    \ and project settings of the\n                                    plug-in as\
+    \ well as the Sonar server configurations.\n                                 \
+    \   With repository settings you can specify the behaviour of the plug-in for\
+    \ each\n                                    repository individually. Project settings\
+    \ allow you to reuse common settings across\n                                \
+    \    all repositories of your Bitbucket project. SonarQube server configurations\
+    \ offer\n                                    you a way to reuse the connection\
+    \ settings of your SonarQube server(s) in all\n                              \
+    \      your repositories."
+  version: "v1"
+  title: "Sonar for Bitbucket 6.x Server REST API"
+  contact:
+    name: "Mibex Software GmbH"
+    url: "https://www.mibexsoftware.com"
+  license:
+    name: "Copyright (c) 2021 by Mibex Software GmbH, Switzerland. All rights reserved."
+    url: "https://mibexsoftware.com/imprint/"
+host: "YOUR_BITBUCKET_SERVER"
+basePath: "/rest/sonar4stash/1.0"
+tags:
+- name: "Project settings"
+- name: "Repository settings"
+- name: "Sonar server configurations"
+- name: "Sonar user token configuration"
+- name: "SonarQube project to repository module mapping"
+schemes:
+- "http"
+- "https"
+paths:
+  /projects/{projectKey}/repos/{repositorySlug}/settings:
+    get:
+      tags:
+      - "Repository settings"
+      summary: "Returns the repository settings of the plug-in."
+      description: ""
+      operationId: "getRepositorySettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Repository settings found"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ permissions"
+        404:
+          description: "The given repository does not exist or there are no settings\
+            \ for this repository"
+    post:
+      tags:
+      - "Repository settings"
+      summary: "Creates or updates the repository settings for the plug-in."
+      description: ""
+      operationId: "createOrUpdateRepositorySettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "Repository Settings"
+        required: true
+        schema:
+          $ref: "#/definitions/RestRepoConfig"
+      responses:
+        200:
+          description: "Repository settings saved"
+        400:
+          description: "Invalid parameters or mandatory parameters not passed"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ permissions"
+        404:
+          description: "The given repository does not exist or there are no settings\
+            \ for this repository"
+    delete:
+      tags:
+      - "Repository settings"
+      summary: "Deletes repository settings for the plug-in."
+      description: ""
+      operationId: "deleteRepositorySettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Repository configuration deleted"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ permissions"
+        404:
+          description: "The given repository does not exist or there are no settings\
+            \ for this repository"
+  /projects/{projectKey}/repos/{repositorySlug}/sonar-projects:
+    get:
+      tags:
+      - "SonarQube project to repository module mapping"
+      summary: "Returns all SonarQube project mapped to a repository"
+      description: ""
+      operationId: "getSonarProjectMappings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SonarQube project mappings for the repository"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The specified repository/project does not exit"
+    post:
+      tags:
+      - "SonarQube project to repository module mapping"
+      summary: "Create SonarQube project mapping"
+      description: ""
+      operationId: "createSonarProjectMapping"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube project mapping"
+        required: true
+        schema:
+          $ref: "#/definitions/RestSonarProject"
+      responses:
+        200:
+          description: "SonarQube project mapping created"
+        400:
+          description: "The SonarQube project mapping could not be validated"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+    put:
+      tags:
+      - "SonarQube project to repository module mapping"
+      summary: "Update SonarQube project mapping"
+      description: ""
+      operationId: "updateSonarProjectMapping"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube project mapping"
+        required: true
+        schema:
+          $ref: "#/definitions/RestSonarProject"
+      responses:
+        200:
+          description: "SonarQube project mapping updated"
+        400:
+          description: "The SonarQube project mapping could not be validated"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+  /projects/{projectKey}/repos/{repositorySlug}/sonar-projects/{sonarProjectId}:
+    delete:
+      tags:
+      - "SonarQube project to repository module mapping"
+      summary: "Deletes a SonarQube project mapping from a repository."
+      description: ""
+      operationId: "deleteSonarProjectMapping"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "sonarProjectId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SonarQube project mapping deleted"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+  /projects/{projectKey}/settings:
+    get:
+      tags:
+      - "Project settings"
+      summary: "Returns the project settings of the plug-in."
+      description: ""
+      operationId: "getProjectSettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project settings found"
+        401:
+          description: "The currently authenticated user does not have PROJECT_ADMIN\
+            \ permissions"
+        404:
+          description: "The given project does not exist or there are no settings\
+            \ for this project"
+    post:
+      tags:
+      - "Project settings"
+      summary: "Creates or updates project settings for the plug-in."
+      description: ""
+      operationId: "createOrUpdateProjectSettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "Project Settings"
+        required: true
+        schema:
+          $ref: "#/definitions/RestProjectConfig"
+      responses:
+        200:
+          description: "Project settings saved"
+        400:
+          description: "Invalid parameters or mandatory parameters not passed"
+        401:
+          description: "The currently authenticated user does not have PROJECT_ADMIN\
+            \ permissions"
+        404:
+          description: "The given project does not exist or there are no settings\
+            \ for this project"
+    delete:
+      tags:
+      - "Project settings"
+      summary: "Deletes project settings for the plug-in."
+      description: ""
+      operationId: "deleteProjectSettings"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project configuration deleted"
+        401:
+          description: "The currently authenticated user does not have PROJECT_ADMIN\
+            \ permissions"
+        404:
+          description: "The given project does not exist or there are no settings\
+            \ for this project"
+  /sonar-server-configs:
+    get:
+      tags:
+      - "Sonar server configurations"
+      summary: "Returns the SonarQube server configurations."
+      description: ""
+      operationId: "getSonarServerConfigurations"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "SonarQube server configurations found"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+    post:
+      tags:
+      - "Sonar server configurations"
+      summary: "Creates a SonarQube server configuration."
+      description: ""
+      operationId: "createSonarServerConfiguration"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "SonarQube server configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestAdminConfig"
+      responses:
+        200:
+          description: "SonarQube server configuration updated"
+        400:
+          description: "A validation error for the given input occurred"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+    put:
+      tags:
+      - "Sonar server configurations"
+      summary: "Updates a SonarQube server configuration."
+      description: ""
+      operationId: "updateSonarServerConfiguration"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "SonarQube server configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestAdminConfig"
+      responses:
+        200:
+          description: "SonarQube server configuration updated"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+        404:
+          description: "The SonarQube server configuration does not exist"
+    delete:
+      tags:
+      - "Sonar server configurations"
+      summary: "Deletes a SonarQube server configuration."
+      description: ""
+      operationId: "deleteSonarServerConfiguration"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "fallbackServerId"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "removeRepoConfig"
+        in: "query"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "SonarQube server configuration deleted"
+        400:
+          description: "The arguments are not valid. Either a valid fallbackServerId\
+            \ or removeRepoConfig is required"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+        404:
+          description: "The SonarQube server configuration does not exist"
+  /sonar-server-configs/edition:
+    get:
+      tags:
+      - "Sonar server configurations"
+      summary: "Get SonarQube server edition."
+      description: ""
+      operationId: "getSonarQubeServerEdition"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "Fetched SonarQube server edition"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+        404:
+          description: "The SonarQube server configuration does not exist"
+        500:
+          description: "Error fetching the onarQube server edition"
+  /sonar-server-configs/repos-using-sonar-server:
+    get:
+      tags:
+      - "Sonar server configurations"
+      summary: "Returns a list of repos using a Sonar config"
+      description: ""
+      operationId: "getReposUsingSonarServer"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "SonarQube server configurations found"
+        401:
+          description: "The currently authenticated user does not have ADMIN credentials"
+        404:
+          description: "Sonar server not found"
+  /user-tokens/{userSlug}:
+    get:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Returns the SonarQube user tokens for a specific Bitbucket user."
+      description: ""
+      operationId: "getUserTokens"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SonarQube user tokens returned"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+    post:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Creates a SonarQube user token configuration."
+      description: ""
+      operationId: "addUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube user token configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestUserToken"
+      responses:
+        200:
+          description: "SonarQube user token configuration created"
+        400:
+          description: "A validation error for the given input occurred"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
+    put:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Updates a SonarQube user token configuration."
+      description: ""
+      operationId: "updateUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SonarQube user token configuration"
+        required: true
+        schema:
+          $ref: "#/definitions/RestUserToken"
+      responses:
+        200:
+          description: "SonarQube user token configuration updated"
+        400:
+          description: "A validation error for the given input occurred"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
+    delete:
+      tags:
+      - "Sonar user token configuration"
+      summary: "Deletes a SonarQube user token configuration."
+      description: ""
+      operationId: "deleteUserToken"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userSlug"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "SonarQube user token configuration deleted"
+        401:
+          description: "The authenticated user does not match the one tokens are requested\
+            \ for"
+        404:
+          description: "The SonarQube user does not exist"
+definitions:
+  RestAdminConfig:
+    type: "object"
+    required:
+    - "allowUserTokens"
+    - "description"
+    - "id"
+    - "illegalBranchReplacement"
+    - "invalidWebhookState"
+    - "manualWebhookEnabled"
+    - "manualWebhookSecret"
+    - "name"
+    - "requireUserTokensType"
+    - "serviceAccountUserTokenProvided"
+    - "sonarDisplayUrl"
+    - "sonarLogin"
+    - "sonarOrganizationKey"
+    - "sonarPassword"
+    - "sonarQubeEdition"
+    - "sonarQubeEditionMigrationWarning"
+    - "sonarQubeWebhookConfigURL"
+    - "sonarServerUrl"
+    - "sonarUserToken"
+    properties:
+      name:
+        type: "string"
+      description:
+        type: "string"
+      sonarServerUrl:
+        type: "string"
+      sonarDisplayUrl:
+        type: "string"
+      sonarQubeEdition:
+        type: "string"
+      sonarQubeEditionMigrationWarning:
+        type: "string"
+      sonarOrganizationKey:
+        type: "string"
+      sonarLogin:
+        type: "string"
+      sonarPassword:
+        type: "string"
+      sonarUserToken:
+        type: "string"
+      allowUserTokens:
+        type: "boolean"
+      requireUserTokensType:
+        type: "string"
+      illegalBranchReplacement:
+        type: "string"
+      manualWebhookEnabled:
+        type: "boolean"
+      manualWebhookSecret:
+        type: "string"
+      id:
+        type: "integer"
+        format: "int32"
+      serviceAccountUserTokenProvided:
+        type: "boolean"
+      invalidWebhookState:
+        type: "string"
+      sonarQubeWebhookConfigURL:
+        type: "string"
+    xml:
+      name: "adminconfig"
+  RestProjectConfig:
+    type: "object"
+    required:
+    - "duplicateCode"
+    - "issues"
+    - "mergeChecks"
+    - "project"
+    - "provisioning"
+    - "statistics"
+    - "testCoverage"
+    properties:
+      project:
+        $ref: "#/definitions/RestProjectSonarProjectConfig"
+      issues:
+        $ref: "#/definitions/RestRepoIssueConfig"
+      duplicateCode:
+        $ref: "#/definitions/RestRepoDuplicateCodeConfig"
+      testCoverage:
+        $ref: "#/definitions/RestRepoTestCoverageConfig"
+      statistics:
+        $ref: "#/definitions/RestRepoStatisticsConfig"
+      mergeChecks:
+        $ref: "#/definitions/RestRepoMergeCheckConfig"
+      provisioning:
+        $ref: "#/definitions/RestRepoProvisioningConfig"
+  RestProjectSonarProjectConfig:
+    type: "object"
+    required:
+    - "branchPrefix"
+    - "forkCleanupEnabled"
+    - "illegalBranchCharReplacement"
+    - "matchingBranchesRegex"
+    - "projectCleanupEnabled"
+    - "pullRequestBranch"
+    - "showIssuesInSource"
+    properties:
+      showIssuesInSource:
+        type: "boolean"
+      illegalBranchCharReplacement:
+        type: "string"
+      branchPrefix:
+        type: "string"
+      pullRequestBranch:
+        type: "string"
+      projectCleanupEnabled:
+        type: "boolean"
+      forkCleanupEnabled:
+        type: "boolean"
+      matchingBranchesRegex:
+        type: "string"
+  RestRepoConfig:
+    type: "object"
+    required:
+    - "duplicateCode"
+    - "issues"
+    - "mergeChecks"
+    - "project"
+    - "provisioning"
+    - "statistics"
+    - "testCoverage"
+    properties:
+      project:
+        $ref: "#/definitions/RestRepoProjectConfig"
+      issues:
+        $ref: "#/definitions/RestRepoIssueConfig"
+      duplicateCode:
+        $ref: "#/definitions/RestRepoDuplicateCodeConfig"
+      testCoverage:
+        $ref: "#/definitions/RestRepoTestCoverageConfig"
+      statistics:
+        $ref: "#/definitions/RestRepoStatisticsConfig"
+      mergeChecks:
+        $ref: "#/definitions/RestRepoMergeCheckConfig"
+      provisioning:
+        $ref: "#/definitions/RestRepoProvisioningConfig"
+  RestRepoDuplicateCodeConfig:
+    type: "object"
+    required:
+    - "showDuplicateCode"
+    properties:
+      showDuplicateCode:
+        type: "boolean"
+  RestRepoIssueConfig:
+    type: "object"
+    required:
+    - "showSonarIssues"
+    - "sonarIssueMinSeverity"
+    properties:
+      showSonarIssues:
+        type: "boolean"
+      sonarIssueMinSeverity:
+        type: "string"
+  RestRepoMergeCheckConfig:
+    type: "object"
+    required:
+    - "groupsToIgnoreMergeCheck"
+    - "mergeChecksForMatches"
+    - "qualityGatesEnabled"
+    - "targetMergeChecksForMatches"
+    - "usersToIgnoreMergeCheck"
+    properties:
+      mergeChecksForMatches:
+        type: "string"
+      targetMergeChecksForMatches:
+        type: "string"
+      qualityGatesEnabled:
+        type: "boolean"
+      usersToIgnoreMergeCheck:
+        type: "string"
+      groupsToIgnoreMergeCheck:
+        type: "string"
+  RestRepoProjectConfig:
+    type: "object"
+    required:
+    - "branchPrefix"
+    - "buildType"
+    - "forkCleanupEnabled"
+    - "illegalBranchCharReplacement"
+    - "inheritFromProject"
+    - "matchingBranchesRegex"
+    - "projectCleanupEnabled"
+    - "pullRequestBranch"
+    - "showIssuesInSource"
+    - "sonarEnabled"
+    properties:
+      sonarEnabled:
+        type: "boolean"
+      inheritFromProject:
+        type: "boolean"
+      buildType:
+        type: "string"
+      showIssuesInSource:
+        type: "boolean"
+      illegalBranchCharReplacement:
+        type: "string"
+      branchPrefix:
+        type: "string"
+      pullRequestBranch:
+        type: "string"
+      projectCleanupEnabled:
+        type: "boolean"
+      forkCleanupEnabled:
+        type: "boolean"
+      matchingBranchesRegex:
+        type: "string"
+  RestRepoProvisioningConfig:
+    type: "object"
+    required:
+    - "propertiesProvisioningEnabled"
+    - "qualityGateProvisioningEnabled"
+    - "qualityProfileProvisioningEnabled"
+    properties:
+      qualityProfileProvisioningEnabled:
+        type: "boolean"
+      propertiesProvisioningEnabled:
+        type: "boolean"
+      qualityGateProvisioningEnabled:
+        type: "boolean"
+  RestRepoStatisticsConfig:
+    type: "object"
+    required:
+    - "showBranchStatistics"
+    - "showQualityGatesInLists"
+    properties:
+      showBranchStatistics:
+        type: "boolean"
+      showQualityGatesInLists:
+        type: "boolean"
+  RestRepoTestCoverageConfig:
+    type: "object"
+    required:
+    - "showCoverage"
+    properties:
+      showCoverage:
+        type: "boolean"
+  RestSonarProject:
+    type: "object"
+    required:
+    - "id"
+    - "moduleDir"
+    - "sonarAnalysisDir"
+    - "sonarProjectDesc"
+    - "sonarProjectKey"
+    - "sonarProjectKeyPrefix"
+    - "sonarServerConfigId"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+      sonarServerConfigId:
+        type: "integer"
+        format: "int32"
+      sonarProjectKey:
+        type: "string"
+      sonarProjectKeyPrefix:
+        type: "string"
+      sonarAnalysisDir:
+        type: "string"
+      moduleDir:
+        type: "string"
+      sonarProjectDesc:
+        type: "string"
+  RestUserToken:
+    type: "object"
+    required:
+    - "id"
+    - "sonarServerConfig"
+    - "sonarServerConfigId"
+    - "sonarUserToken"
+    properties:
+      sonarUserToken:
+        type: "string"
+      sonarServerConfig:
+        $ref: "#/definitions/RestAdminConfig"
+      sonarServerConfigId:
+        type: "integer"
+        format: "int32"
+      id:
+        type: "integer"
+        format: "int32"
+    xml:
+      name: "usertoken"
