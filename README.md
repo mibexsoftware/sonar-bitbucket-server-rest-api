@@ -15,13 +15,6 @@
 - Documentation(ReDoc): https://mibexsoftware.github.io/sonar-bitbucket-server-rest-api/
 
 ## Working on specification
-### Install
-
-1. Install [Node JS](https://nodejs.org/)
-2. Clone repo and `cd`
-    + Run `npm install`
-
-### Usage
 
 1. `cd rest-api` 
 2. Start a simple http server that watches your files e.g. `npx browser-sync start --server --files "*.html, *.yaml"`
