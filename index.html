@@ -1,24 +1,85 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Sonar for Bitbucket Server API Specification</title>
-    <!-- needed for adaptive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <title>Sonar for Bitbucket API Specification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding-top: 40px;
+    }
 
-    <!--
-    ReDoc uses font options from the parent element
-    So override default browser styles
-    -->
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <redoc spec-url="./swagger.json">
-    </redoc>
-    <script src="//rebilly.github.io/ReDoc/releases/v1.x.x/redoc.min.js"> </script>
-  </body>
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+    #links_container {
+      margin: 0;
+      padding: 0;
+      background-color: #7E4A95;
+    }
+    /*prevent distracting download spec button*/
+    .download-openapi {
+      display: none !important;
+    }
+    #links_container li {
+      display: inline-block;
+      padding: 10px;
+      color: white;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top navigation placeholder -->
+<nav>
+  <ul id="links_container">
+  </ul>
+</nav>
+
+<redoc scroll-y-offset="body > nav"></redoc>
+
+<script src="https://cdn.jsdelivr.net/npm/redoc@v2.0.0-rc.66/bundles/redoc.standalone.js"> </script>
+<script>
+  // list of APIS
+  const apis = [
+    // TODO: Remove with 6.0.0 release
+    // {
+    //   name:  'Sonar for Bitbucket 6.x',
+    //   url: '../openapi_sonar_6.x.yaml'
+    // },
+    {
+      name: 'Sonar for Bitbucket 5.x',
+      url: '../openapi_sonar_5.x.yaml'
+    },
+  ];
+
+  // initially render first API
+  Redoc.init(apis[0].url, {
+      hideDownloadButton: true 
+    });
+
+  function onClick() {
+    var url = this.getAttribute('data-link');
+
+    Redoc.init(url, {
+      hideDownloadButton: true 
+    });
+  }
+
+  // dynamically building navigation items
+  const $list = document.getElementById('links_container');
+  apis.forEach(function(api) {
+    const $listitem = document.createElement('li');
+    $listitem.setAttribute('data-link', api.url);
+    $listitem.innerText = api.name;
+    $listitem.addEventListener('click', onClick);
+    $list.appendChild($listitem);
+  });
+</script>
+</body>
 </html>

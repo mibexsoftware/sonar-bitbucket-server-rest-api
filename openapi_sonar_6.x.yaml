@@ -1,0 +1,1060 @@
+openapi: 3.0.1
+info:
+  title: Sonar for Bitbucket 6.x REST API
+  description: |-
+    The REST API for [Sonar for Bitbucket](https://marketplace.atlassian.com/apps/1212735). allows you to
+    - Configure SonarQube server connections
+    - Configure Sonar for Bitbucket settings on projects and repositories
+    - Configure SonarQube project mappings to repositories
+    - Set SonarQube user tokens
+    
+    **Need support?** take a look at our [wiki](https://mibexsoftware.atlassian.net/l/c/tsBUTXF9) or contact us under [support@mibexsoftware.com](support@mibexsoftware.com)
+
+  contact:
+    name: Mibex Software GmbH
+    url: https://www.mibexsoftware.com
+  license:
+    name: Copyright (c) 2021 by Mibex Software GmbH, Switzerland. All rights reserved.
+    url: https://mibexsoftware.com/imprint/
+  version: v1
+servers:
+  - url: https://{YOUR_BITBUCKET_SERVER}/rest/sonar4stash/1.0
+    variables:
+      YOUR_BITBUCKET_SERVER:
+        default: localhost:7990/bitbucket
+        description: The Bitbucket Base URL
+    
+tags:
+  - name: Project settings
+    description: Create or modify projects settings for Sonar for Bitbucket
+  - name: Repository settings
+    description: Create or modify repository settings for Sonar for Bitbucket
+  - name: Sonar server configurations
+    description: Create or modify your connections to SonrQube servers
+  - name: Sonar user token configuration
+    description: Control you SonarQube user token
+  - name: SonarQube project mappings
+    description: Configure mappings from SonarQube projects to repositories
+paths:
+  /projects/{projectKey}/repos/{repositorySlug}/settings:
+    get:
+      tags:
+      - Repository settings
+      summary: Returns the repository settings of the plug-in.
+      operationId: getRepositorySettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repositorySlug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Repository settings found
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestRepoConfig"
+        401:
+          description: The currently authenticated user does not have REPO_ADMIN permissions
+        404:
+          description: The given repository does not exist or there are no settings
+            for this repository
+    post:
+      tags:
+      - Repository settings
+      summary: Creates or updates the repository settings for the plug-in.
+      operationId: createOrUpdateRepositorySettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repositorySlug
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestRepoConfig'
+        required: true
+      responses:
+        200:
+          description: Repository settings saved
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestRepoConfig"
+        400:
+          description: Invalid parameters or mandatory parameters not passed
+        401:
+          description: The currently authenticated user does not have REPO_ADMIN permissions
+        404:
+          description: The given repository does not exist or there are no settings
+            for this repository
+    delete:
+      tags:
+      - Repository settings
+      summary: Deletes repository settings for the plug-in.
+      operationId: deleteRepositorySettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repositorySlug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Repository configuration deleted
+        401:
+          description: The currently authenticated user does not have REPO_ADMIN permissions
+        404:
+          description: The given repository does not exist or there are no settings
+            for this repository
+
+  /projects/{projectKey}/repos/{repositorySlug}/sonar-projects:
+    get:
+      tags:
+      - "SonarQube project mappings"
+      summary: "Returns all SonarQube project mapped to a repository"
+      description: ""
+      operationId: "getSonarProjectMappings"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "SonarQube project mappings for the repository"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestSonarProjectsResponse"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The specified repository/project does not exit"
+    post:
+      tags:
+        - "SonarQube project mappings"
+      summary: "Create SonarQube project mapping"
+      description: ""
+      operationId: "createSonarProjectMapping"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestSonarProject"
+        required: true
+      responses:
+        200:
+          description: "SonarQube project mapping created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestSonarProjectResponse"
+        400:
+          description: "The SonarQube project mapping could not be validated"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+    put:
+      tags:
+        - "SonarQube project mappings"
+      summary: "Update SonarQube project mapping"
+      description: ""
+      operationId: "updateSonarProjectMapping"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestSonarProject"
+      responses:
+        200:
+          description: "SonarQube project mapping updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestSonarProjectResponse"
+        400:
+          description: "The SonarQube project mapping could not be validated"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+  /projects/{projectKey}/repos/{repositorySlug}/sonar-projects/{sonarProjectId}:
+    delete:
+      tags:
+      - "SonarQube project mappings"
+      summary: "Deletes a SonarQube project mapping from a repository."
+      description: ""
+      operationId: "deleteSonarProjectMapping"
+      parameters:
+      - name: "projectKey"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "repositorySlug"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "sonarProjectId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "SonarQube project mapping deleted"
+        401:
+          description: "The currently authenticated user does not have REPO_ADMIN\
+            \ credentials"
+        404:
+          description: "The repository, project or SonarQube project mapping does\
+            \ not exist"
+  /projects/{projectKey}/settings:
+    get:
+      tags:
+      - Project settings
+      summary: Returns the project settings of the plug-in.
+      operationId: getProjectSettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Project settings found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestProjectConfig"
+        401:
+          description: The currently authenticated user does not have PROJECT_ADMIN
+            permissions
+          content: {}
+        404:
+          description: The given project does not exist or there are no settings for
+            this project
+          content: {}
+    post:
+      tags:
+      - Project settings
+      summary: Creates or updates project settings for the plug-in.
+      operationId: createOrUpdateProjectSettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestProjectConfig'
+        required: true
+      responses:
+        200:
+          description: Project settings saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestProjectConfig"
+        400:
+          description: Invalid parameters or mandatory parameters not passed
+        401:
+          description: The currently authenticated user does not have PROJECT_ADMIN permissions
+        404:
+          description: The given project does not exist or there are no settings for
+            this project
+
+    delete:
+      tags:
+      - Project settings
+      summary: Deletes project settings for the plug-in.
+      operationId: deleteProjectSettings
+      parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Project configuration deleted
+        401:
+          description: The currently authenticated user does not have PROJECT_ADMIN permissions
+        404:
+          description: The given project does not exist or there are no settings for this project
+
+  /sonar-server-configs:
+    get:
+      tags:
+      - Sonar server configurations
+      summary: Returns the SonarQube server configurations.
+      operationId: getSonarServerConfigurations
+      responses:
+        200:
+          description: SonarQube server configurations found
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestSonarServerConfigs"
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+    put:
+      tags:
+      - Sonar server configurations
+      summary: Updates a SonarQube server configuration.
+      operationId: updateSonarServerConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestAdminConfig'
+        required: true
+      responses:
+        200:
+          description: SonarQube server configuration updated
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestAdminResponse"
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+        404:
+          description: The SonarQube server configuration does not exist
+    post:
+      tags:
+      - Sonar server configurations
+      summary: Creates a SonarQube server configuration.
+      operationId: createSonarServerConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestAdminConfig'
+        required: true
+      responses:
+        200:
+          description: SonarQube server configuration added
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestAdminResponse"
+        400:
+          description: A validation error for the given input occurred
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+    delete:
+      tags:
+      - Sonar server configurations
+      summary: Deletes a SonarQube server configuration.
+      operationId: deleteSonarServerConfiguration
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: fallbackServerId
+        in: query
+        description: Fallback server id which is assigned to repositories that use this server
+        schema:
+          type: integer
+          format: int32
+      - name: removeRepoConfig
+        in: query
+        description: Deletes all Sonar repository configurations that use this server
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: SonarQube server configuration deleted
+        400:
+          description: The arguments are not valid. Either a valid fallbackServerId
+            or removeRepoConfig is required
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+        404:
+          description: The SonarQube server configuration does not exist
+  /sonar-server-configs/edition:
+    get:
+      tags:
+      - Sonar server configurations
+      summary: Get SonarQube server edition.
+      operationId: getSonarQubeEdition
+      responses:
+        200:
+          description: Fetched SonarQube server edition
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - COMMUNITY_EDITION
+                  - COMMUNITY_EDITION_BRANCH
+                  - COMMERCIAL_EDITION
+              
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+        404:
+          description: The SonarQube server configuration does not exist
+        500:
+          description: Error fetching the onarQube server edition
+  /sonar-server-configs/repos-using-sonar-server:
+    get:
+      tags:
+      - Sonar server configurations
+      summary: Returns a list of repos using a Sonar config
+      operationId: getReposUsingSonarServer
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: All repositories that are used by this SonarQube server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReposUsingSonarServer"
+        401:
+          description: The currently authenticated user does not have ADMIN credentials
+        404:
+          description: Sonar server not found
+  /user-tokens/{userSlug}:
+    get:
+      tags:
+      - Sonar user token configuration
+      summary: Returns the SonarQube user tokens for a specific Bitbucket user.
+      operationId: getUserTokens
+      parameters:
+      - name: userSlug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: SonarQube user tokens returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestUserTokens"
+        401:
+          description: The authenticated user does not match the one tokens are requested for
+
+    put:
+      tags:
+      - Sonar user token configuration
+      summary: Updates a SonarQube user token configuration.
+      operationId: updateUserToken
+      parameters:
+      - name: userSlug
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestUserToken'
+        required: true
+      responses:
+        200:
+          description: SonarQube user token configuration updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestUserTokenResponse"
+        400:
+          description: A validation error for the given input occurred
+        401:
+          description: The authenticated user does not match the one tokens are requested for
+        404:
+          description: The SonarQube user does not exist
+    post:
+      tags:
+      - Sonar user token configuration
+      summary: Creates a SonarQube user token configuration.
+      operationId: addUserToken
+      parameters:
+      - name: userSlug
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestUserToken'
+        required: true
+      responses:
+        200:
+          description: SonarQube user token configuration created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestUserTokenResponse"
+        400:
+          description: A validation error for the given input occurred
+        401:
+          description: The authenticated user does not match the one tokens are requested for
+        404:
+          description: The SonarQube user does not exist
+    delete:
+      tags:
+      - Sonar user token configuration
+      summary: Deletes a SonarQube user token configuration.
+      operationId: deleteUserToken
+      parameters:
+      - name: userSlug
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: query
+        schema:
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: SonarQube user token configuration deleted
+        401:
+          description: The authenticated user does not match the one tokens are requested for
+        404:
+          description: The SonarQube user does not exist
+components:
+  schemas:
+    RestAdminConfig:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Give a name to your server configuration to reference it.
+        description:
+          type: string
+          description: An optional text to describe this server configuration.
+        sonarServerUrl:
+          type: string
+          description: URL of your SonarQube server instance (e.g., "http://192.168.1.27:9000" or "https://sonarcloud.io").
+        sonarDisplayUrl:
+          type: string
+          description: The display URL is used when rendering links to the SonarQube server in the user's 
+            browser. Should only be different to the Application URL if your Bitbucket cannot access the 
+            internet directly (e.g. behind a firewall or proxy), otherwise leave empty.
+        sonarQubeEdition:
+          type: string
+          description: The SonarQube edition of the server
+          enum:
+            - COMMUNITY_EDITION
+            - COMMUNITY_EDITION_BRANCH
+            - COMMERCIAL_EDITION
+        sonarOrganizationKey:
+          type: string
+          description: This is the organization key for your SonarCloud account.
+        sonarLogin:
+          type: string
+          deprecated: true
+          description: | 
+            Deprecated: use sonarUserToken
+        sonarPassword:
+          type: string
+          deprecated: true
+          description: | 
+            Deprecated: use sonarUserToken
+        sonarUserToken:
+          type: string
+          description: Enter SonarQube user token of Service Account. Leave empty if anonymous login is allowed.
+        allowUserTokens:
+          type: boolean
+          description: Allow users to use their own SonarQube account when making
+            requests to this SonarQube server from Bitbucket.
+        invalidWebhookState:
+          type: string
+          description: 'OPTIONAL: State of webhook configuration if not valid for
+            this app in the SonarQube server'
+        requireUserTokensType:
+          type: string
+          description: |
+           Only considerdd if `allowUserTokens` is `true`
+             - `NOT_REQUIRED`: optional personal user tokens
+             - `REQUIRE_WRITABLE_ACTIONS`: required personal user tokens **for write actions**
+             - `REQUIRE_ALL_ACTIONS`: required for all SonarQube actions
+          enum:
+          - NOT_REQUIRED
+          - REQUIRE_ALL_ACTIONS
+          - REQUIRE_WRITABLE_ACTIONS
+        illegalBranchReplacement:
+          type: string
+          description: |
+            - Ony for community editions: SonarQube forbids using certain characters in project keys which may be present in branch names.
+            - Allowed characters in SonarQube project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a "/" which is typically used in Git branch naming patterns (e.g., features/user-story-xyz) must be replaced by the provided character here. 
+            - Make sure that this project key replacement character matches the one in your build system (e.g., Sonar for Bamboo).
+        manualWebhookEnabled:
+          type: boolean
+          description: |
+            Enble this option for manual webhook configuration and create a [webhook as described on our Wiki page manually](https://mibexsoftware.atlassian.net/wiki/spaces/MSS/pages/2315911173/Configure+Webhook+in+SonarQube#Manual-webhook-setup)
+            with name: `ch.mibex.bitbucket.sonar` and URL: `https://YOUR_BITBUCKET/rest/sonar4stash/1.0/webhook/secret`
+        manualWebhookSecret:
+          type: string
+          writeOnly: true
+          description: The secret for the manual webhook from SonarQube.
+        id:
+          type: integer
+          default: null
+          description: ID of the referenced server configuration. Only necessary when
+            updating/deleting a configuration.
+          format: int32
+
+
+    RestSonarServerConfigs:
+      type: array
+      items:
+        type: object
+        properties:
+          sonarServerConfigs:
+            $ref: "#/components/schemas/RestAdminConfig"
+
+    RestAdminResponse:
+      type: object
+      properties:
+        sonarServerConfig:
+          $ref: "#/components/schemas/RestAdminConfig"
+
+    ReposUsingSonarServer:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Repository name
+        link:
+          type: string
+          description: Link to Sonar for Bitbucket settings of this repository
+
+    RestProjectConfig:
+      required:
+      - duplicateCode
+      - issues
+      - mergeChecks
+      - project
+      - provisioning
+      - statistics
+      - testCoverage
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/RestProjectSonarProjectConfig'
+        issues:
+          $ref: '#/components/schemas/RestRepoIssueConfig'
+        duplicateCode:
+          $ref: '#/components/schemas/RestRepoDuplicateCodeConfig'
+        testCoverage:
+          $ref: '#/components/schemas/RestRepoTestCoverageConfig'
+        statistics:
+          $ref: '#/components/schemas/RestRepoStatisticsConfig'
+        mergeChecks:
+          $ref: '#/components/schemas/RestRepoMergeCheckConfig'
+        provisioning:
+          $ref: '#/components/schemas/RestRepoProvisioningConfig'
+    RestProjectSonarProjectConfig:
+      type: object
+      properties:
+        showIssuesInSource:
+          type: boolean
+          default: true
+          description: When enabled, Sonar issues and coverage  will
+            be shown in the Bitbucket source file view as well.
+        illegalBranchCharReplacement:
+          type: string
+          deprecated: true 
+          description: 'UNUSED: use illegalBranchCharReplacement setting on Sonar server configuration '
+        branchPrefix:
+          type: string
+          description: Only necessary if you have Sonar project keys where the branch
+            name differs from the one in Bitbucket. If you have a branch key like
+            "origin/branch" in your Sonar project key, you therefore might want to
+            set this field to "origin/".
+        pullRequestBranch:
+          type: string
+          description:  Only necessary if you want to use the special pull request branches `refs/pull-requests/*/from`
+            instead of the source branch of the pull request to get data from SonarQube.
+            This might be useful if you only build & analyze pull request branches,
+            but not the source branch of the pull request. Use values like `refs/pull-requests/%d/from`
+            or `pull-requests/%d` and the app will replace "%d" with the actual pull
+            request ID. Note that you must not enable this if you want to use pull
+            request analysis of commercial SonarQube editions or SonarCloud.
+        projectCleanupEnabled:
+          type: boolean
+          default: false
+          description: Deletes a Sonar project when its corresponding branch is deleted
+            in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects
+            are created due to code reviews with branches).
+        forkCleanupEnabled:
+          type: boolean
+          default: false
+          description: |
+            Deletesa Sonar project for a deleted branch in a repository fork (CAUTION: such
+            a project might be referenced from the origin repository and other forks,
+            therefore make sure that you really want this).
+        matchingBranchesRegex:
+          type: string
+          description: |
+            The app will only be enabled for pull requests with source branches matching this regular
+            expression. Example for only analyzing feature branches: `feature/.*` You
+            can also use negative patterns like `((?!feature/).)*` to enable it for
+            everything except feature branches.
+    RestRepoConfig:
+      required:
+      - duplicateCode
+      - issues
+      - mergeChecks
+      - project
+      - provisioning
+      - statistics
+      - testCoverage
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/RestRepoProjectConfig'
+        issues:
+          $ref: '#/components/schemas/RestRepoIssueConfig'
+        duplicateCode:
+          $ref: '#/components/schemas/RestRepoDuplicateCodeConfig'
+        testCoverage:
+          $ref: '#/components/schemas/RestRepoTestCoverageConfig'
+        statistics:
+          $ref: '#/components/schemas/RestRepoStatisticsConfig'
+        mergeChecks:
+          $ref: '#/components/schemas/RestRepoMergeCheckConfig'
+        provisioning:
+          $ref: '#/components/schemas/RestRepoProvisioningConfig'
+    RestRepoDuplicateCodeConfig:
+      type: object
+      properties:
+        showDuplicateCode:
+          type: boolean
+          description: Shows duplicate code lines found in the source view.
+    RestRepoIssueConfig:
+      type: object
+      properties:
+        showSonarIssues:
+          type: boolean
+          description: Show Sonar issues in the pull request diff.
+        sonarIssueMinSeverity:
+          type: string
+          description: Only issues with severity equal or higher than this will be
+            shown.
+          enum:
+          - INFO
+          - MINOR
+          - MAJOR
+          - CRITICAL
+          - BLOCKER
+    RestRepoMergeCheckConfig:
+      type: object
+      properties:
+        mergeChecksForMatches:
+          type: string
+          example: ^(?!feature\/).*$
+          description: |
+            Only run merge checks for SOURCE branches of a pull request matching this regex (leave empty
+            to always run merge checks). Example for excluding feature branches: `^(?!feature\/).*$`
+        targetMergeChecksForMatches:
+          type: string
+          example: master|develop|release.*
+          description: |
+            Only run merge checks for TARGET branches of a pull request matching this regex (leave empty
+            to always run merge checks). This is useful when you e.g. only want to
+            run merge checks when you merge into `release/develop/master` branches but
+            do not want to run them when merging feature branches. Example for only
+            checking these branches: `master|develop|release.*`
+        qualityGatesEnabled:
+          type: boolean
+          description: This will use the configured quality gates for the SonarQube
+            project as merge checks. If any of the quality gates has an error, merging
+            of pull requests will be prevented.
+        usersToIgnoreMergeCheck:
+          type: string
+          description: |
+            A list of Bitbucket Server users separated with `|!|` which
+            should be allowed to merge even if a quality gate fails. Example: `adam|!|sara`
+        groupsToIgnoreMergeCheck:
+          type: string
+          description: |
+            A list of Bitbucket Server groups separated with `|!|` which
+            members should be allowed to merge even if a quality gate fails. Example:
+            `devs|!|ops`
+    RestRepoProjectConfig:
+      type: object
+      properties:
+        sonarEnabled:
+          type: boolean
+          description: true if the app should be enabled for this repository
+        inheritFromProject:
+          type: boolean
+          description: true if you want to inherit the plug-ins settings for this
+            repository from the project; not supported for repository forks
+        buildType:
+          type: string
+          deprecated: true
+          description: Not used anymore.
+          enum:
+          - AUTO
+          - COMPATIBILITY
+        showIssuesInSource:
+          type: boolean
+          description: When enabled, Sonar issues, coverage and duplicate lines will
+            be shown in the Bitbucket source file view as well.
+        illegalBranchCharReplacement:
+          type: string
+          deprecated: true 
+          description: 'UNUSED: use illegalBranchCharReplacement setting on Sonar server configuration '
+        branchPrefix:
+          type: string
+          description: Only necessary if you have Sonar project keys where the branch
+            name differs from the one in Bitbucket. If you have a branch key like
+            `origin/branch` in your Sonar project key, you therefore might want to
+            set this field to `origin/`.
+        pullRequestBranch:
+          type: string
+          description:  Only necessary if you want to use the special pull request branches `refs/pull-requests/*/from`
+            instead of the source branch of the pull request to get data from SonarQube.
+            This might be useful if you only build & analyze pull request branches,
+            but not the source branch of the pull request. Use values like `refs/pull-requests/%d/from`
+            or `pull-requests/%d` and the app will replace "%d" with the actual pull
+            request ID. Note that you must not enable this if you want to use pull
+            request analysis of commercial SonarQube editions or SonarCloud.
+        projectCleanupEnabled:
+          type: boolean
+          default: false
+          description: Deletes a Sonar project when its corresponding branch is deleted
+            in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects
+            are created due to code reviews with branches).
+        forkCleanupEnabled:
+          type: boolean
+          default: false
+          description: |
+            Deletesa Sonar project for a deleted branch in a repository fork (CAUTION: such
+            a project might be referenced from the origin repository and other forks,
+            therefore make sure that you really want this).
+        matchingBranchesRegex:
+          type: string
+          description: |
+            The app will only be enabled for pull requests with source branches matching this regular
+            expression. Example for only analyzing feature branches: `feature/.*` You
+            can also use negative patterns like `((?!feature/).)*` to enable it for
+            everything except feature branches.
+
+    RestRepoProvisioningConfig:
+      type: object
+      properties:
+        qualityProfileProvisioningEnabled:
+          type: boolean
+          description: SonarQube quality profiles are not shared between main and
+            feature branch projects. If this setting is enabled, this plug-in will
+            copy all quality profiles from the master to a branch project.
+        propertiesProvisioningEnabled:
+          type: boolean
+          description: SonarQube project properties (like file exclusion patterns)
+            that are configured in the main branch project are not applied to a new
+            branch project automatically. If this setting is enabled, this plug-in
+            will copy all project properties from the master to the branch project.
+        qualityGateProvisioningEnabled:
+          type: boolean
+          description: Copies the assigned quality gate from the main branch project
+            to new branch projects automatically.
+    RestRepoStatisticsConfig:
+      type: object
+      properties:
+        showBranchStatistics:
+          type: boolean
+          description: Shows Sonar branch statistics in the repository source view.
+        showQualityGatesInLists:
+          type: boolean
+          description: Show quality gate status in the pull request and branches lists.
+    RestRepoTestCoverageConfig:
+      type: object
+      properties:
+        showCoverage:
+          type: boolean
+          description: Marks uncovered code lines in the source and pull request diff
+            view.
+    RestSonarProject:
+      type: object
+      required:
+      - moduleDir
+      - sonarAnalysisDir
+      - sonarProjectKey
+      - sonarProjectKeyPrefix
+      - sonarServerConfigId
+      properties:
+        id:
+          type: integer
+          format: int32
+          description:
+            ID of the SonarQube project mapping. Only necessary when updating/deleting a configuration.
+        sonarServerConfigId:
+          type: integer
+          format: int32
+          description:
+            Choose the SonarQube server to be used for this repository. Use the SonarQube 
+            server configuration REST service to get this ID
+        sonarProjectKey:
+          type: string
+          description: |
+            Enter the SonarQube project key. [SonarQube Community Edition: use project key from the main project.
+            This is also the project from which properties and quality profiles are copied when branch project provisioning is active]
+        sonarProjectKeyPrefix:
+          type: string
+          description: |
+            Only for SonarQube Community Edition: This is the branch project prefix of your SonarQube project key. 
+            The app will append the branch name to it (`<branch project prefix>:<sonar-branch>`, e.g. `org.apache.commons:commons-lang3:master`)
+        sonarAnalysisDir:
+          type: string
+          description:
+            Path to the SonarQube analysis directory, relative to repo root and without leading slash, e.g. component/frontend/src.
+            Must start with the module directory. Leave empty if the analysis is done in the repository root
+        moduleDir:
+          type: string
+          description:
+            Path from the repository root to a submodule without leading slash, e.g. component/frontend.
+            Leave empty for a single SonarQube project
+        sonarProjectDesc:
+          type: string
+          readOnly: true
+          description:
+            SonarQube project description. Readonly, only for app usage.
+    RestSonarProjectsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          sonarServerConfigs:
+            $ref: "#/components/schemas/RestAdminConfig"
+
+    RestSonarProjectResponse:
+      type: object
+      properties:
+        sonarProject:
+          $ref: "#/components/schemas/RestSonarProject"
+        warningMessages:
+          $ref: "#/components/schemas/RestErrors"
+
+    RestUserToken:
+      required:
+      - id
+      - sonarServerConfig
+      - sonarServerConfigId
+      - sonarUserToken
+      type: object
+      properties:
+        sonarUserToken:
+          type: string
+          description: Your persona SonarQube user token
+        sonarServerConfig:
+          readOnly:
+          $ref: '#/components/schemas/RestAdminConfig'
+        sonarServerConfigId:
+          type: integer
+          format: int32
+          description: The SonarQube server config ID to which this token belongs
+        id:
+          type: integer
+          format: int32
+      xml:
+        name: usertoken
+
+    RestErrors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              context: 
+                type: string
+              message: 
+                type: string
+              exceptionName:
+                type: string
+
+    RestUserTokens:
+      type: array
+      items:
+        type: object
+        properties:
+          userTokens:
+            $ref: "#/components/schemas/RestUserToken"
+
+
+    RestUserTokenResponse:
+      type: object
+      properties:
+        userToken:
+          $ref: "#/components/schemas/RestUserToken"
+        warningMessages:
+          $ref: "#/components/schemas/RestErrors"
