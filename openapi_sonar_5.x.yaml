@@ -1,32 +1,33 @@
 ---
   swagger: "2.0"
   info:
-    description: "REST API documentation for the plug-in Sonar for Bitbucket Server.\n\
-      \                                    The REST API allows you to maintain the repository\
+    description: "REST API documentation for the plug-in Include Code Quality for Bitbucket (formerly Sonar™ for Bitbucket).\n\
+      \                                    \nThe REST API allows you to maintain the repository\
       \ and project settings of the\n                                    plug-in as\
-      \ well as the Sonar server configurations.\n                                 \
+      \ well as the SonarQube™ server configurations.\n                                 \
       \   With repository settings you can specify the behaviour of the plug-in for\
       \ each\n                                    repository individually. Project settings\
       \ allow you to reuse common settings across\n                                \
-      \    all repositories of your Bitbucket project. SonarQube server configurations\
+      \    all repositories of your Bitbucket project. SonarQube™ server configurations\
       \ offer\n                                    you a way to reuse the connection\
-      \ settings of your SonarQube server(s) in all\n                              \
-      \      your repositories."
+      \ settings of your SonarQube™ server(s) in all\n                              \
+      \      your repositories.\n   \
+      \ \nSONAR™, SONARQUBE™ and SONARCLOUD™ are independent and trademarked products and services of SonarSource SA: see [sonarsource.com](https://sonarsource.com), [sonarqube.org](https://sonarqube.org), [sonarcloud.io](https://sonarcloud.io)."
     version: "v1"
-    title: "Sonar for Bitbucket 5.x REST API"
+    title: "Include Code Quality for Bitbucket 5.x REST API"
     contact:
       name: "Mibex Software GmbH"
       url: "https://www.mibexsoftware.com"
     license:
-      name: "Copyright (c) 2021 by Mibex Software GmbH, Switzerland. All rights reserved."
+      name: "Copyright (c) 2022 by Mibex Software GmbH, Switzerland. All rights reserved."
       url: "https://mibexsoftware.com/imprint/"
   host: "YOUR_BITBUCKET_SERVER"
   basePath: "/rest/sonar4stash/1.0"
   tags:
   - name: "Project settings"
   - name: "Repository settings"
-  - name: "Sonar server configurations"
-  - name: "Sonar user token configuration"
+  - name: "SonarQube™ server configurations"
+  - name: "SonarQube™ user token configuration"
   schemes:
   - "http"
   - "https"
@@ -206,8 +207,8 @@
     /sonar-server-configs:
       get:
         tags:
-        - "Sonar server configurations"
-        summary: "Returns the SonarQube server configurations."
+        - "SonarQube™ server configurations"
+        summary: "Returns the SonarQube™ server configurations."
         description: ""
         operationId: "getSonarServerConfigurations"
         consumes:
@@ -217,13 +218,13 @@
         parameters: []
         responses:
           200:
-            description: "SonarQube server configurations found"
+            description: "SonarQube™ server configurations found"
           401:
             description: "The currently authenticated user does not have ADMIN credentials"
       post:
         tags:
-        - "Sonar server configurations"
-        summary: "Creates a SonarQube server configuration."
+        - "SonarQube™ server configurations"
+        summary: "Creates a SonarQube™ server configuration."
         description: ""
         operationId: "createSonarServerConfiguration"
         consumes:
@@ -232,21 +233,21 @@
         - "application/json"
         parameters:
         - in: "body"
-          name: "SonarQube server configuration"
+          name: "SonarQube™ server configuration"
           required: true
           schema:
             $ref: "#/definitions/RestAdminConfig"
         responses:
           200:
-            description: "SonarQube server configuration updated"
+            description: "SonarQube™ server configuration updated"
           400:
             description: "A validation error for the given input occurred"
           401:
             description: "The currently authenticated user does not have ADMIN credentials"
       put:
         tags:
-        - "Sonar server configurations"
-        summary: "Updates a SonarQube server configuration."
+        - "SonarQube™ server configurations"
+        summary: "Updates a SonarQube™ server configuration."
         description: ""
         operationId: "updateSonarServerConfiguration"
         consumes:
@@ -255,21 +256,21 @@
         - "application/json"
         parameters:
         - in: "body"
-          name: "SonarQube server configuration"
+          name: "SonarQube™ server configuration"
           required: true
           schema:
             $ref: "#/definitions/RestAdminConfig"
         responses:
           200:
-            description: "SonarQube server configuration updated"
+            description: "SonarQube™ server configuration updated"
           401:
             description: "The currently authenticated user does not have ADMIN credentials"
           404:
-            description: "The SonarQube server configuration does not exist"
+            description: "The SonarQube™ server configuration does not exist"
       delete:
         tags:
-        - "Sonar server configurations"
-        summary: "Deletes a SonarQube server configuration."
+        - "SonarQube™ server configurations"
+        summary: "Deletes a SonarQube™ server configuration."
         description: ""
         operationId: "deleteSonarServerConfiguration"
         consumes:
@@ -293,19 +294,19 @@
           type: "boolean"
         responses:
           200:
-            description: "SonarQube server configuration deleted"
+            description: "SonarQube™ server configuration deleted"
           400:
             description: "The arguments are not valid. Either a valid fallbackServerId\
               \ or removeRepoConfig is required"
           401:
             description: "The currently authenticated user does not have ADMIN credentials"
           404:
-            description: "The SonarQube server configuration does not exist"
+            description: "The SonarQube™ server configuration does not exist"
     /sonar-server-configs/repos-using-sonar-server:
       get:
         tags:
-        - "Sonar server configurations"
-        summary: "Returns a list of repos using a Sonar config"
+        - "SonarQube™ server configurations"
+        summary: "Returns a list of repos using a SonarQube™ server config"
         description: ""
         operationId: "getReposUsingSonarServer"
         consumes:
@@ -320,16 +321,16 @@
           format: "int32"
         responses:
           200:
-            description: "SonarQube server configurations found"
+            description: "SonarQube™ server configurations found"
           401:
             description: "The currently authenticated user does not have ADMIN credentials"
           404:
-            description: "Sonar server not found"
+            description: "SonarQube™ server not found"
     /user-tokens/{userSlug}:
       get:
         tags:
-        - "Sonar user token configuration"
-        summary: "Returns the SonarQube user tokens for a specific Bitbucket user."
+        - "SonarQube™ user token configuration"
+        summary: "Returns the SonarQube™ user tokens for a specific Bitbucket user."
         description: ""
         operationId: "getUserTokens"
         consumes:
@@ -343,14 +344,14 @@
           type: "string"
         responses:
           200:
-            description: "SonarQube user tokens returned"
+            description: "SonarQube™ user tokens returned"
           401:
             description: "The authenticated user does not match the one tokens are requested\
               \ for"
       post:
         tags:
-        - "Sonar user token configuration"
-        summary: "Creates a SonarQube user token configuration."
+        - "SonarQube™ user token configuration"
+        summary: "Creates a SonarQube™ user token configuration."
         description: ""
         operationId: "addUserToken"
         consumes:
@@ -363,24 +364,24 @@
           required: true
           type: "string"
         - in: "body"
-          name: "SonarQube user token configuration"
+          name: "SonarQube™ user token configuration"
           required: true
           schema:
             $ref: "#/definitions/RestUserToken"
         responses:
           200:
-            description: "SonarQube user token configuration created"
+            description: "SonarQube™ user token configuration created"
           400:
             description: "A validation error for the given input occurred"
           401:
             description: "The authenticated user does not match the one tokens are requested\
               \ for"
           404:
-            description: "The SonarQube user does not exist"
+            description: "The SonarQube™ user does not exist"
       put:
         tags:
-        - "Sonar user token configuration"
-        summary: "Updates a SonarQube user token configuration."
+        - "SonarQube™ user token configuration"
+        summary: "Updates a SonarQube™ user token configuration."
         description: ""
         operationId: "updateUserToken"
         consumes:
@@ -393,24 +394,24 @@
           required: true
           type: "string"
         - in: "body"
-          name: "SonarQube user token configuration"
+          name: "SonarQube™ user token configuration"
           required: true
           schema:
             $ref: "#/definitions/RestUserToken"
         responses:
           200:
-            description: "SonarQube user token configuration updated"
+            description: "SonarQube™ user token configuration updated"
           400:
             description: "A validation error for the given input occurred"
           401:
             description: "The authenticated user does not match the one tokens are requested\
               \ for"
           404:
-            description: "The SonarQube user does not exist"
+            description: "The SonarQube™ user does not exist"
       delete:
         tags:
-        - "Sonar user token configuration"
-        summary: "Deletes a SonarQube user token configuration."
+        - "SonarQube™ user token configuration"
+        summary: "Deletes a SonarQube™ user token configuration."
         description: ""
         operationId: "deleteUserToken"
         consumes:
@@ -429,12 +430,12 @@
           format: "int32"
         responses:
           200:
-            description: "SonarQube user token configuration deleted"
+            description: "SonarQube™ user token configuration deleted"
           401:
             description: "The authenticated user does not match the one tokens are requested\
               \ for"
           404:
-            description: "The SonarQube user does not exist"
+            description: "The SonarQube™ user does not exist"
   definitions:
     RestAdminConfig:
       type: "object"
@@ -447,21 +448,21 @@
           description: "An optional text to describe this server configuration."
         sonarServerUrl:
           type: "string"
-          description: "This is the base URL of your Sonar server instance (e.g., \"\
+          description: "This is the base URL of your SonarQube™ server instance (e.g., \"\
             http://192.168.1.27:9000\")."
         sonarDisplayUrl:
           type: "string"
-          description: "This URL will be used for all outgoing links to the SonarQube\
+          description: "This URL will be used for all outgoing links to the SonarQube™\
             \ Web UI. You only have to configure this if a different URL should be used\
-            \ than the \"Sonar Base URL\", e.g. when your SonarQube and Bitbucket server\
+            \ than the \"Sonar Base URL\", e.g. when your SonarQube™ and Bitbucket server\
             \ is in a different network."
         sonarOrganizationKey:
           type: "string"
-          description: "This is the organization key for your SonarCloud account."
+          description: "This is the organization key for your SonarCloud™ account."
         sonarLogin:
           type: "string"
           description: "Leave empty if anonymous login is enabled or if you want to\
-            \ use token-based authentication. If your Sonar server requires authentication,\
+            \ use token-based authentication. If your SonarQube™ server requires authentication,\
             \ provide a valid user login (with system administration permissions if\
             \ you want the plug-in to provision projects with properties)."
         sonarPassword:
@@ -470,16 +471,16 @@
             \ encrypted in the Bitbucket Server database."
         sonarUserToken:
           type: "string"
-          description: "Enter your SonarQube user token if you want to use token-based\
+          description: "Enter your SonarQube™ user token if you want to use token-based\
             \ authentication instead of using login/password."
         allowUserTokens:
           type: "boolean"
-          description: "Allow users to use their own SonarQube account when making requests\
-            \ to this SonarQube server from Bitbucket."
+          description: "Allow users to use their own SonarQube™ account when making requests\
+            \ to this SonarQube™ server from Bitbucket."
         invalidWebhookState:
           type: "string"
           description: "OPTIONAL: State of webhook configuration if not valid for this\
-            \ app in the SonarQube server"
+            \ app in the SonarQube™ server"
         requireUserTokensType:
           type: "string"
           description: "Type of user tokens requirement."
@@ -492,13 +493,13 @@
           description: "Replacement for illegal branch characters."
         manualWebhookEnabled:
           type: "boolean"
-          description: "The app creates a global webhook in SonarQube to get notified\
-            \ about new analysis results. This requires SonarQube system admin permissions.\
+          description: "The app creates a global webhook in SonarQube™ to get notified\
+            \ about new analysis results. This requires SonarQube™ system admin permissions.\
             \ If you do not want to configure system admin credentials, enable this\
             \ option."
         manualWebhookSecret:
           type: "string"
-          description: "The secret for the manual webhook from SonarQube."
+          description: "The secret for the manual webhook from SonarQube™."
         id:
           type: "integer"
           format: "int32"
@@ -537,48 +538,48 @@
         useSonarBranchFeature:
           type: "boolean"
           description: "(available from plug-in version >= 1.15, removed in 5.0); Use the commercial\
-            \ SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name)\
-            \ and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project\
+            \ SonarQube™ branching and pull request feature which creates branches (-Dsonar.branch.name)\
+            \ and pull requests (-Dsonar.pullRequest.*) inside the same SonarQube™ project\
             \ and does not result in separate projects anymore as it was the case with\
             \ -Dsonar.branch."
         showIssuesInSource:
           type: "boolean"
-          description: "When enabled, Sonar issues, coverage and duplicate lines will\
+          description: "When enabled, SonarQube™ issues, coverage and duplicate lines will\
             \ be shown in the Bitbucket source file view as well."
         illegalBranchCharReplacement:
           type: "string"
-          description: "Only configure for SonarQube Community versions 7.9.x or 8.4\
+          description: "Only configure for SonarQube™ Community versions 7.9.x or 8.4\
             \ and newer, otherwise leave it empty! These versions only allow the following\
             \ characters in its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\"\
             \ which is typically used in Git branch naming patterns (e.g., features/user-story-xyz)\
             \ must be replaced by the provided character here. Make sure that this branch\
             \ key replacement character matches the one in your build system (e.g.,\
-            \ Sonar for Bamboo)."
+            \ Include Code Quality for Bamboo)."
         branchPrefix:
           type: "string"
-          description: "Only necessary if you have Sonar project keys where the branch\
+          description: "Only necessary if you have SonarQube™ project keys where the branch\
             \ name differs from the one in Bitbucket. If you have a branch key like\
-            \ \"origin/branch\" in your Sonar project key, you therefore might want\
+            \ \"origin/branch\" in your SonarQube™ project key, you therefore might want\
             \ to set this field to \"origin/\"."
         pullRequestBranch:
           type: "string"
           description: "(available from plug-in version >= 1.11); Only necessary if\
             \ you want to use the special pull request branches \"refs/pull-requests/*/from\"\
-            \ instead of the source branch of the pull request to get data from SonarQube.\
+            \ instead of the source branch of the pull request to get data from SonarQube™.\
             \ This might be useful if you only build & analyze pull request branches,\
             \ but not the source branch of the pull request. Use values like \"refs/pull-requests/%d/from\"\
             \ or \"pull-requests/%d\" and the app will replace \"%d\" with the actual\
             \ pull request ID. Note that you must not enable this if you want to use\
-            \ pull request analysis of commercial SonarQube editions or SonarCloud."
+            \ pull request analysis of commercial SonarQube™ editions or SonarCloud™."
         projectCleanupEnabled:
           type: "boolean"
-          description: "Deletes a Sonar project when its corresponding branch is deleted\
-            \ in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects\
+          description: "Deletes a SonarQube™ project when its corresponding branch is deleted\
+            \ in Bitbucket (avoids to clutter up SonarQube™ when a lot of SonarQube™ projects\
             \ are created due to code reviews with branches)."
         forkCleanupEnabled:
           type: "boolean"
           description: "(available from plug-in version >= 1.11); will also delete a\
-            \ Sonar project for a deleted branch in a repository fork (CAUTION: such\
+            \ SonarQube™ project for a deleted branch in a repository fork (CAUTION: such\
             \ a project might be referenced from the origin repository and other forks,\
             \ therefore make sure that you really want this)."
         matchingBranchesRegex:
@@ -624,7 +625,7 @@
       properties:
         showSonarIssues:
           type: "boolean"
-          description: "Show Sonar issues in the pull request diff."
+          description: "Show SonarQube™ issues in the pull request diff."
         sonarIssueMinSeverity:
           type: "string"
           description: "Only issues with severity equal or higher than this will be\
@@ -654,7 +655,7 @@
             \ checking these branches: master|develop|release.*"
         qualityGatesEnabled:
           type: "boolean"
-          description: "This will use the configured quality gates for the SonarQube\
+          description: "This will use the configured quality gates for the SonarQube™\
             \ project as merge checks. If any of the quality gates has an error, merging\
             \ of pull requests will be prevented."
         usersToIgnoreMergeCheck:
@@ -679,77 +680,77 @@
         serverConfigId:
           type: "integer"
           format: "int32"
-          description: "Choose the SonarQube server to be used for this repository.\
-            \ Use the SonarQube server configuration REST service to get this ID."
+          description: "Choose the SonarQube™ server to be used for this repository.\
+            \ Use the SonarQube™ server configuration REST service to get this ID."
         masterProjectKey:
           type: "string"
-          description: "Choose the Sonar project of your master branch. This is also\
+          description: "Choose the SonarQube™ project of your master branch. This is also\
             \ the project from which properties and quality profiles are copied when\
             \ branch project provisioning is active."
         projectBaseKey:
           type: "string"
-          description: "This is the base project key of your Sonar project. The app\
+          description: "This is the base project key of your SonarQube™ project. The app\
             \ will append the branch name to it (<sonar project base key>:<sonar-branch>,\
-            \ e.g. \"org.apache.commons:commons-lang3:master\") to fetch Sonar projects\
-            \ in SonarQube community editions. For commercial editions, this option\
+            \ e.g. \"org.apache.commons:commons-lang3:master\") to fetch SonarQube™ projects\
+            \ in SonarQube™ community editions. For commercial editions, this option\
             \ is not used."
         sonarAnalysisDir:
           type: "string"
-          description: "Relative path to the SonarQube \"analysis directory\" in this repository."
+          description: "Relative path to the SonarQube™ \"analysis directory\" in this repository."
         useSonarBranchFeature:
           type: "boolean"
           description: "(available from plug-in version >= 1.15, removed in 5.0); Use the commercial\
-            \ SonarQube branching and pull request feature which creates branches (-Dsonar.branch.name)\
-            \ and pull requests (-Dsonar.pullRequest.*) inside the same Sonar project\
+            \ SonarQube™ branching and pull request feature which creates branches (-Dsonar.branch.name)\
+            \ and pull requests (-Dsonar.pullRequest.*) inside the same SonarQube™ project\
             \ and does not result in separate projects anymore as it was the case with\
             \ -Dsonar.branch."
         buildType:
           type: "string"
           description: "Use compatibility mode when automatic mode does not work for\
             \ you. While compatibility mode can be significantly slower to fetch data\
-            \ from SonarQube, it should work in cases where the automatic mode does\
+            \ from SonarQube™, it should work in cases where the automatic mode does\
             \ not."
           enum:
           - "AUTO"
           - "COMPATIBILITY"
         showIssuesInSource:
           type: "boolean"
-          description: "When enabled, Sonar issues, coverage and duplicate lines will\
+          description: "When enabled, SonarQube™ issues, coverage and duplicate lines will\
             \ be shown in the Bitbucket source file view as well."
         illegalBranchCharReplacement:
           type: "string"
-          description: "Only configure for SonarQube Community versions 7.9.x or 8.4\
+          description: "Only configure for SonarQube™ Community versions 7.9.x or 8.4\
             \ and newer, otherwise leave it empty! These versions only allow the following\
             \ characters in its project keys: [0-9a-zA-Z:\\-_.:]. Therefore, a \"/\"\
             \ which is typically used in Git branch naming patterns (e.g., features/user-story-xyz)\
             \ must be replaced by the provided character here. Make sure that this branch\
             \ key replacement character matches the one in your build system (e.g.,\
-            \ Sonar for Bamboo)."
+            \ Include Code Quality for Bamboo)."
         branchPrefix:
           type: "string"
-          description: "Only necessary if you have Sonar project keys where the branch\
+          description: "Only necessary if you have SonarQube™ project keys where the branch\
             \ name differs from the one in Bitbucket. If you have a branch key like\
-            \ \"origin/branch\" in your Sonar project key, you therefore might want\
+            \ \"origin/branch\" in your SonarQube™ project key, you therefore might want\
             \ to set this field to \"origin/\"."
         pullRequestBranch:
           type: "string"
           description: "(available from plug-in version >= 1.11); Only necessary if\
             \ you want to use the special pull request branches \"refs/pull-requests/*/from\"\
-            \ instead of the source branch of the pull request to get data from SonarQube.\
+            \ instead of the source branch of the pull request to get data from SonarQube™.\
             \ This might be useful if you only build & analyze pull request branches,\
             \ but not the source branch of the pull request. Use values like \"refs/pull-requests/%d/from\"\
             \ or \"pull-requests/%d\" and the app will replace \"%d\" with the actual\
             \ pull request ID. Note that you must not enable this if you want to use\
-            \ pull request analysis of commercial SonarQube editions or SonarCloud."
+            \ pull request analysis of commercial SonarQube™ editions or SonarCloud™."
         projectCleanupEnabled:
           type: "boolean"
-          description: "Deletes a Sonar project when its corresponding branch is deleted\
-            \ in Bitbucket (avoids to clutter up SonarQube when a lot of Sonar projects\
+          description: "Deletes a SonarQube™ project when its corresponding branch is deleted\
+            \ in Bitbucket (avoids to clutter up SonarQube™ when a lot of SonarQube™ projects\
             \ are created due to code reviews with branches)."
         forkCleanupEnabled:
           type: "boolean"
           description: "(available from plug-in version >= 1.11); will also delete a\
-            \ Sonar project for a deleted branch in a repository fork (CAUTION: such\
+            \ SonarQube™ project for a deleted branch in a repository fork (CAUTION: such\
             \ a project might be referenced from the origin repository and other forks,\
             \ therefore make sure that you really want this)."
         matchingBranchesRegex:
@@ -764,12 +765,12 @@
       properties:
         qualityProfileProvisioningEnabled:
           type: "boolean"
-          description: "SonarQube quality profiles are not shared between main and feature\
+          description: "SonarQube™ quality profiles are not shared between main and feature\
             \ branch projects. If this setting is enabled, this plug-in will copy all\
             \ quality profiles from the master to a branch project."
         propertiesProvisioningEnabled:
           type: "boolean"
-          description: "SonarQube project properties (like file exclusion patterns)\
+          description: "SonarQube™ project properties (like file exclusion patterns)\
             \ that are configured in the main branch project are not applied to a new\
             \ branch project automatically. If this setting is enabled, this plug-in\
             \ will copy all project properties from the master to the branch project."
@@ -782,10 +783,10 @@
       properties:
         showStatistics:
           type: "boolean"
-          description: "Shows Sonar statistics on the pull request overview screen. (Removed in 5.0)"
+          description: "Shows SonarQube™ statistics on the pull request overview screen. (Removed in 5.0)"
         showBranchStatistics:
           type: "boolean"
-          description: "Shows Sonar branch statistics in the repository source view."
+          description: "Shows SonarQube™ branch statistics in the repository source view."
         showQualityGatesInLists:
           type: "boolean"
           description: "Show quality gate status in the pull request and branches lists."
