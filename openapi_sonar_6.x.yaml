@@ -25,7 +25,7 @@ servers:
       YOUR_BITBUCKET_SERVER:
         default: localhost:7990/bitbucket
         description: The Bitbucket Base URL
-    
+
 tags:
   - name: Project settings
     description: Create or modify projects settings for the plug-in
@@ -41,24 +41,24 @@ paths:
   /projects/{projectKey}/repos/{repositorySlug}/settings:
     get:
       tags:
-      - Repository settings
+        - Repository settings
       summary: Returns the repository settings of the plug-in.
       operationId: getRepositorySettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: repositorySlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repositorySlug
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Repository settings found
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestRepoConfig"
@@ -69,20 +69,20 @@ paths:
             for this repository
     post:
       tags:
-      - Repository settings
+        - Repository settings
       summary: Creates or updates the repository settings for the plug-in.
       operationId: createOrUpdateRepositorySettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: repositorySlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repositorySlug
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -92,7 +92,7 @@ paths:
       responses:
         200:
           description: Repository settings saved
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestRepoConfig"
@@ -105,20 +105,20 @@ paths:
             for this repository
     delete:
       tags:
-      - Repository settings
+        - Repository settings
       summary: Deletes repository settings for the plug-in.
       operationId: deleteRepositorySettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: repositorySlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repositorySlug
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Repository configuration deleted
@@ -131,21 +131,21 @@ paths:
   /projects/{projectKey}/repos/{repositorySlug}/sonar-projects:
     get:
       tags:
-      - "SonarQube™ project mappings"
+        - "SonarQube™ project mappings"
       summary: "Returns all SonarQube™ projects mapped to a repository"
       description: ""
       operationId: "getSonarProjectMappings"
       parameters:
-      - name: "projectKey"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      - name: "repositorySlug"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
+        - name: "projectKey"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "repositorySlug"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
       responses:
         200:
           description: "SonarQube™ project mappings for the repository"
@@ -165,16 +165,16 @@ paths:
       description: ""
       operationId: "createSonarProjectMapping"
       parameters:
-      - name: "projectKey"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      - name: "repositorySlug"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
+        - name: "projectKey"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "repositorySlug"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
       requestBody:
         content:
           application/json:
@@ -203,16 +203,16 @@ paths:
       description: ""
       operationId: "updateSonarProjectMapping"
       parameters:
-      - name: "projectKey"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      - name: "repositorySlug"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
+        - name: "projectKey"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "repositorySlug"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
       requestBody:
         content:
           application/json:
@@ -236,26 +236,26 @@ paths:
   /projects/{projectKey}/repos/{repositorySlug}/sonar-projects/{sonarProjectId}:
     delete:
       tags:
-      - "SonarQube™ project mappings"
+        - "SonarQube™ project mappings"
       summary: "Deletes a SonarQube™ project mapping from a repository."
       description: ""
       operationId: "deleteSonarProjectMapping"
       parameters:
-      - name: "projectKey"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      - name: "repositorySlug"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      - name: "sonarProjectId"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
+        - name: "projectKey"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "repositorySlug"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "sonarProjectId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
       responses:
         200:
           description: "SonarQube™ project mapping deleted"
@@ -268,15 +268,15 @@ paths:
   /projects/{projectKey}/settings:
     get:
       tags:
-      - Project settings
+        - Project settings
       summary: Returns the project settings of the plug-in.
       operationId: getProjectSettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Project settings found
@@ -294,15 +294,15 @@ paths:
           content: {}
     post:
       tags:
-      - Project settings
+        - Project settings
       summary: Creates or updates project settings for the plug-in.
       operationId: createOrUpdateProjectSettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -326,15 +326,15 @@ paths:
 
     delete:
       tags:
-      - Project settings
+        - Project settings
       summary: Deletes project settings for the plug-in.
       operationId: deleteProjectSettings
       parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: projectKey
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Project configuration deleted
@@ -346,13 +346,13 @@ paths:
   /sonar-server-configs:
     get:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Returns the SonarQube™ server configurations.
       operationId: getSonarServerConfigurations
       responses:
         200:
           description: SonarQube™ server configurations found
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestSonarServerConfigs"
@@ -360,7 +360,7 @@ paths:
           description: The currently authenticated user does not have ADMIN credentials
     put:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Updates a SonarQube™ server configuration.
       operationId: updateSonarServerConfiguration
       requestBody:
@@ -372,7 +372,7 @@ paths:
       responses:
         200:
           description: SonarQube™ server configuration updated
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestAdminResponse"
@@ -382,7 +382,7 @@ paths:
           description: The SonarQube™ server configuration does not exist
     post:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Creates a SonarQube™ server configuration.
       operationId: createSonarServerConfiguration
       requestBody:
@@ -394,7 +394,7 @@ paths:
       responses:
         200:
           description: SonarQube™ server configuration added
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestAdminResponse"
@@ -404,27 +404,27 @@ paths:
           description: The currently authenticated user does not have ADMIN credentials
     delete:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Deletes a SonarQube™ server configuration.
       operationId: deleteSonarServerConfiguration
       parameters:
-      - name: id
-        in: query
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: fallbackServerId
-        in: query
-        description: Fallback server id which is assigned to repositories that use this server
-        schema:
-          type: integer
-          format: int32
-      - name: removeRepoConfig
-        in: query
-        description: Deletes all SonarQube™ repository configurations that use this server
-        schema:
-          type: boolean
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: fallbackServerId
+          in: query
+          description: Fallback server id which is assigned to repositories that use this server
+          schema:
+            type: integer
+            format: int32
+        - name: removeRepoConfig
+          in: query
+          description: Deletes all SonarQube™ repository configurations that use this server
+          schema:
+            type: boolean
       responses:
         200:
           description: SonarQube™ server configuration deleted
@@ -438,7 +438,7 @@ paths:
   /sonar-server-configs/edition:
     get:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Get SonarQube™ server edition.
       operationId: getSonarQubeEdition
       responses:
@@ -452,7 +452,7 @@ paths:
                   - COMMUNITY_EDITION
                   - COMMUNITY_EDITION_BRANCH
                   - COMMERCIAL_EDITION
-              
+
         401:
           description: The currently authenticated user does not have ADMIN credentials
         404:
@@ -462,16 +462,16 @@ paths:
   /sonar-server-configs/repos-using-sonar-server:
     get:
       tags:
-      - SonarQube™ server configurations
+        - SonarQube™ server configurations
       summary: Returns a list of repos using a SonarQube™ config
       operationId: getReposUsingSonarServer
       parameters:
-      - name: id
-        in: query
-        required: true
-        schema:
-          type: integer
-          format: int32
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
       responses:
         200:
           description: All repositories that are used by this SonarQube™ server
@@ -486,15 +486,15 @@ paths:
   /user-tokens/{userSlug}:
     get:
       tags:
-      - SonarQube™ user token configuration
+        - SonarQube™ user token configuration
       summary: Returns the SonarQube™ user tokens for a specific Bitbucket user.
       operationId: getUserTokens
       parameters:
-      - name: userSlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userSlug
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: SonarQube™ user tokens returned
@@ -507,15 +507,15 @@ paths:
 
     put:
       tags:
-      - SonarQube™ user token configuration
+        - SonarQube™ user token configuration
       summary: Updates a SonarQube™ user token configuration.
       operationId: updateUserToken
       parameters:
-      - name: userSlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userSlug
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -537,15 +537,15 @@ paths:
           description: The SonarQube™ user does not exist
     post:
       tags:
-      - SonarQube™ user token configuration
+        - SonarQube™ user token configuration
       summary: Creates a SonarQube™ user token configuration.
       operationId: addUserToken
       parameters:
-      - name: userSlug
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userSlug
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -567,20 +567,20 @@ paths:
           description: The SonarQube™ user does not exist
     delete:
       tags:
-      - SonarQube™ user token configuration
+        - SonarQube™ user token configuration
       summary: Deletes a SonarQube™ user token configuration.
       operationId: deleteUserToken
       parameters:
-      - name: userSlug
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: query
-        schema:
-          type: integer
-          format: int32
+        - name: userSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
       responses:
         200:
           description: SonarQube™ user token configuration deleted
@@ -604,8 +604,8 @@ components:
           description: URL of your SonarQube™ server instance (e.g., "http://192.168.1.27:9000" or "https://sonarcloud.io").
         sonarDisplayUrl:
           type: string
-          description: The display URL is used when rendering links to the SonarQube™ server in the user's 
-            browser. Should only be different to the Application URL if your Bitbucket cannot access the 
+          description: The display URL is used when rendering links to the SonarQube™ server in the user's
+            browser. Should only be different to the Application URL if your Bitbucket cannot access the
             internet directly (e.g. behind a firewall or proxy), otherwise leave empty.
         sonarQubeEdition:
           type: string
@@ -620,12 +620,12 @@ components:
         sonarLogin:
           type: string
           deprecated: true
-          description: | 
+          description: |
             Deprecated: use sonarUserToken
         sonarPassword:
           type: string
           deprecated: true
-          description: | 
+          description: |
             Deprecated: use sonarUserToken
         sonarUserToken:
           type: string
@@ -641,14 +641,14 @@ components:
         requireUserTokensType:
           type: string
           description: |
-           Only considerdd if `allowUserTokens` is `true`
-             - `NOT_REQUIRED`: optional personal user tokens
-             - `REQUIRE_WRITABLE_ACTIONS`: required personal user tokens **for write actions**
-             - `REQUIRE_ALL_ACTIONS`: required for all SonarQube™ actions
+            Only considerdd if `allowUserTokens` is `true`
+              - `NOT_REQUIRED`: optional personal user tokens
+              - `REQUIRE_WRITABLE_ACTIONS`: required personal user tokens **for write actions**
+              - `REQUIRE_ALL_ACTIONS`: required for all SonarQube™ actions
           enum:
-          - NOT_REQUIRED
-          - REQUIRE_ALL_ACTIONS
-          - REQUIRE_WRITABLE_ACTIONS
+            - NOT_REQUIRED
+            - REQUIRE_ALL_ACTIONS
+            - REQUIRE_WRITABLE_ACTIONS
         illegalBranchReplacement:
           type: string
           description: |
@@ -698,13 +698,13 @@ components:
 
     RestProjectConfig:
       required:
-      - duplicateCode
-      - issues
-      - mergeChecks
-      - project
-      - provisioning
-      - statistics
-      - testCoverage
+        - duplicateCode
+        - issues
+        - mergeChecks
+        - project
+        - provisioning
+        - statistics
+        - testCoverage
       type: object
       properties:
         project:
@@ -731,7 +731,7 @@ components:
             be shown in the Bitbucket source file view as well.
         illegalBranchCharReplacement:
           type: string
-          deprecated: true 
+          deprecated: true
           description: 'UNUSED: use illegalBranchCharReplacement setting on SonarQube™ server configuration '
         branchPrefix:
           type: string
@@ -770,13 +770,13 @@ components:
             everything except feature branches.
     RestRepoConfig:
       required:
-      - duplicateCode
-      - issues
-      - mergeChecks
-      - project
-      - provisioning
-      - statistics
-      - testCoverage
+        - duplicateCode
+        - issues
+        - mergeChecks
+        - project
+        - provisioning
+        - statistics
+        - testCoverage
       type: object
       properties:
         project:
@@ -810,11 +810,11 @@ components:
           description: Only issues with severity equal or higher than this will be
             shown.
           enum:
-          - INFO
-          - MINOR
-          - MAJOR
-          - CRITICAL
-          - BLOCKER
+            - INFO
+            - MINOR
+            - MAJOR
+            - CRITICAL
+            - BLOCKER
     RestRepoMergeCheckConfig:
       type: object
       properties:
@@ -864,15 +864,15 @@ components:
           deprecated: true
           description: Not used anymore.
           enum:
-          - AUTO
-          - COMPATIBILITY
+            - AUTO
+            - COMPATIBILITY
         showIssuesInSource:
           type: boolean
           description: When enabled, SonarQube™ issues, coverage and duplicate lines will
             be shown in the Bitbucket source file view as well.
         illegalBranchCharReplacement:
           type: string
-          deprecated: true 
+          deprecated: true
           description: 'UNUSED: use illegalBranchCharReplacement setting on SonarQube™ server configuration '
         branchPrefix:
           type: string
@@ -947,11 +947,11 @@ components:
     RestSonarProject:
       type: object
       required:
-      - moduleDir
-      - sonarAnalysisDir
-      - sonarProjectKey
-      - sonarProjectKeyPrefix
-      - sonarServerConfigId
+        - moduleDir
+        - sonarAnalysisDir
+        - sonarProjectKey
+        - sonarProjectKeyPrefix
+        - sonarServerConfigId
       properties:
         id:
           type: integer
@@ -962,7 +962,7 @@ components:
           type: integer
           format: int32
           description:
-            Choose the SonarQube™ server to be used for this repository. Use the SonarQube™ 
+            Choose the SonarQube™ server to be used for this repository. Use the SonarQube™
             server configuration REST service to get this ID
         sonarProjectKey:
           type: string
@@ -1007,27 +1007,29 @@ components:
 
     RestUserToken:
       required:
-      - id
-      - sonarServerConfig
-      - sonarServerConfigId
-      - sonarUserToken
+        - sonarServerConfigId
+        - sonarUserToken
       type: object
       properties:
         sonarUserToken:
           type: string
-          description: Your persona SonarQube™ user token
+          description: Your personal SonarQube™ user token
         sonarServerConfig:
-          readOnly:
-          $ref: '#/components/schemas/RestAdminConfig'
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/RestAdminConfig'
         sonarServerConfigId:
           type: integer
           format: int32
-          description: The SonarQube™ server config ID to which this token belongs
+          description: |
+            The SonarQube™ server config ID to which this token belongs.             
+            Use GET /sonar-server-configs to select the appropriate id.
+
         id:
           type: integer
           format: int32
-      xml:
-        name: usertoken
+          description: |
+            Required in PUT requests to update a token. 
 
     RestErrors:
       type: object
@@ -1037,9 +1039,9 @@ components:
           items:
             type: object
             properties:
-              context: 
+              context:
                 type: string
-              message: 
+              message:
                 type: string
               exceptionName:
                 type: string
